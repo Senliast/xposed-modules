@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Updates Manager Extended</string>
+    <string name="app_status_not_loaded">Модуль не загружен. Xposed не найден, версия слишком старая или модуль не включён в Менеджере Xposed</string>
+    <string name="app_status_loaded_disabled">Модуль загружен, но отключён</string>
+    <string name="app_status_loaded_enabled">Модуль загружен и активен</string>
+    <string name="enable_module">Включить модуль</string>
+    <string name="filter_apps">Искать приложения</string>
+    <string name="show_system_apps">Показывать системные приложения</string>
+    <string name="blocked_first">Сначала заблокированные</string>
+    <string name="back">Назад</string>
+    <string name="hint_app_selection">Изменения вступают в силу немедленно</string>
+    <string name="select_blacklisted_apps">Выбрать приложения, для которых обновления будут заблокированы</string>
+    <string name="import_settings">Импортировать настройки</string>
+    <string name="export_settings">Экспортировать настройки</string>
+    <string name="about_app">О приложении</string>
+    <string name="about_app_part_2">Это - модуль Xposed, который позволяет заблокировать обновления (в том числе и автоамтические обновления) для выбранных приложений, всё равно из какого магазина приложений они установлены. После выбора приложений, для которых обновления должны быть заблокированы, магазин приложений всё также будет находить обновления, однако не будет их устанавливать. Обратите внимание, что выбранные приложения также невозможно будет обновить при помощи APK-файла.</string>
+    <string name="about_app_part_3">Создано Senliast,</string>
+    <string name="please_wait">Пожалуйста ждите...</string>
+    <string name="preferences_successfully_imported">"Настройки успешно импортированы из файла: "</string>
+    <string name="not_a_valid_preferences_file">"Это - не файл настроек Updates Manager Extended: "</string>
+    <string name="error_importing_preferences">"Ошибка импорта настроек: "</string>
+    <string name="preferences_successfully_exported">"Настройки успешно экспортированы в файл: "</string>
+    <string name="error_exporting_preferences">"Ошибка экспорта настроек: "</string>
+</resources>
