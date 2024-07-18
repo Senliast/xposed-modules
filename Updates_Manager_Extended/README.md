@@ -30,7 +30,7 @@ You can download latest release from: https://github.com/Senliast/xposed-modules
 
 ## Uninstalling
 1. Remove the APK.
-2. Reboote the device.
+2. Reboot the device.
 
 
 
