@@ -11,7 +11,7 @@ You can download latest release from: https://github.com/Senliast/xposed-modules
 ## Installation
 1. Install the APK.
 2. Enable the module in EdXposed / LSPosed Manager, whitelist (in case of using EdXposed with whitelist mode) or add to scope (in case of using LSPosed) the following packages:
- - System UI
+   - System UI
 3. Reboot the device
 
 ## Uninstalling
