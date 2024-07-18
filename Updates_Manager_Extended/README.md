@@ -9,9 +9,9 @@ This is an Xposed module, that allows you to block app updates (including automa
 
 
 ## Compatibility
-App stores: ALL
-CPUs: arm, arm64, x86, x64
-Android versions: guaranted to work on AOSP Android 12-14. It will NOT work on Android 11 and below. It will probably work on OEM skins (Samsung, MIUI), as long as the Android version matches, but no guaranty.
+App stores: ALL  
+CPUs: arm, arm64, x86, x64  
+Android versions: guaranted to work on AOSP Android 12-14. It will NOT work on Android 11 and below. It will probably work on OEM skins (Samsung, MIUI), as long as the Android version matches, but no guaranty.  
 
 
 
@@ -23,8 +23,8 @@ You can download latest release from: https://github.com/Senliast/xposed-modules
 ## Installation
 1. Install the APK.
 2. Enable the module in LSPosed Manager, add to scope the following packages:
- - Android system
-3. Reboot the device
+   - Android system
+4. Reboot the device
 
 
 
