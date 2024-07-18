@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Updates Manager Extended</string>
+    <string name="app_status_not_loaded">Modul nicht geladen. Entweder wurde Xposed nicht gefunden, ist zu alt, oder Modul ist nicht in Xposed Manager aktiviert</string>
+    <string name="app_status_loaded_disabled">Modul geladen, aber deaktiviert</string>
+    <string name="app_status_loaded_enabled">Modul geladen und aktiv</string>
+    <string name="enable_module">Modul aktivieren</string>
+    <string name="filter_apps">Apps filtern</string>
+    <string name="show_system_apps">System-Apps anzeigen</string>
+    <string name="blocked_first">Blockierte zuerst</string>
+    <string name="back">Zurück</string>
+    <string name="hint_app_selection">Die Änderungen treten sofort in Kraft</string>
+    <string name="select_blacklisted_apps">Apps, für die Updates blockiert werden, auswählen</string>
+    <string name="import_settings">Einstellungen importieren</string>
+    <string name="export_settings">Einstellungen exportieren</string>
+    <string name="about_app">Über diese App</string>
+    <string name="about_app_part_2">Das ist ein Xposed-Modul, der es ermöglicht, Updates (inkl. automatische Updates) für ausgewählte Apps zu blockieren, egal aus welchem App-Laden diese installiert wurden. Nach dem Auswählen der Apps, für die Updates blockiert weden sollen, wird der App-Laden zwar die Updates weiterhin finden, diese werden jedoch nicht installiert. Bitte Beachten Sie, dass es auch nicht möglich sein wird, die ausgwählte Apps mit einem APK zu aktualisieren.</string>
+    <string name="about_app_part_3">Entwickelt bei Senliast,</string>
+    <string name="please_wait">Bitte warten...</string>
+    <string name="preferences_successfully_imported">"Einstellungen erfolgreich aus der Datei importiert: "</string>
+    <string name="not_a_valid_preferences_file">"Dies ist keine Updates Manager Extended-Einstellungen-Datei: "</string>
+    <string name="error_importing_preferences">"Fehler beim Importieren von Einstellungen: "</string>
+    <string name="preferences_successfully_exported">"Einstellungen erfolgreich in die Datei exportiert: "</string>
+    <string name="error_exporting_preferences">"Fehler beim Exportieren von Einstellungen: "</string>
+</resources>
