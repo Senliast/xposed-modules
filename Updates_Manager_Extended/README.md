@@ -1,4 +1,8 @@
 # Updates Manager Extended  
+<p align="center">
+  <img width="460" height="300" src="https://github.com/Senliast/xposed-modules/blob/main/Updates_Manager_Extended/docs/logo.jpg">
+</p>
+
 ## About
 This is an Xposed module, that allows you to block app updates (including automatic updates) for specific apps, no matter from which app store they were installed. After selecting apps, that should be blocked from updates, the app store will still detect updates for these apps, but will be unable to install these. Do note, it will as well not be possible to update selected apps with an APK. Another advantage of this module is that it doesnt brake SafetyNet / Play Integrity as it doesnt hook Google Play or Google Play Services.
 
