@@ -4,7 +4,7 @@
 </p>
 
 ## About
-This is an Xposed module, that allows you to block app updates (including automatic updates) for specific apps, no matter from which app store they were installed. After selecting apps, that should be blocked from updates, the app store will still detect updates for these apps, but will be unable to install these. The specialty of this module is that apps, that are blocked from updates still can verify their license in Google Play and make in-app purchases. It means, you can disable updates for your licensed apps from Google Play without breaking their license. Another advantage of this module is that it doesnt brake SafetyNet / Play Integrity as it doesnt hook Google Play or Google Play Services.
+This is an Xposed module, that allows you to block app updates (including automatic updates) for specific apps, no matter from which app store they were installed. After selecting apps, that should be blocked from updates, the app store will still detect updates for these apps, but will be unable to install these. The specialty of this module is that apps, that are blocked from updates still can verify their license in Google Play and make in-app purchases. It means, you can disable updates for your licensed apps from Google Play without breaking their license. Another advantage of this module is that it doesnt break SafetyNet / Play Integrity as it doesnt hook Google Play or Google Play Services.
 
 The main reason for creating this module was aggressive auto-update policy of Google Play, ignoring and resetting the auto-update setting for specific apps, set by user, see proof:
  - https://android.stackexchange.com/questions/216208/play-store-silently-updates-apps-although-auto-update-is-disabled
