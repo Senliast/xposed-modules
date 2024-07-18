@@ -46,7 +46,7 @@ Q: How does it work?
 A: The module hooks the PackageInstaller process and when an update starts - it checks if the name of the package, that is about to update, is present in the blacklist. If yes - it pretends, that something went wrong during package verification, this way causing the installation to fail.
 
 Q: Why does it need access to Android system and not to Package Installer?  
-A: The Package Installer application is more a GUI, mainly intended for installing APKs. The part that is handling the logic and installation process is part of Android, exactly said its located in com.android.server.pm., therefore, access to Android system is needed.
+A: The Package Installer application is more a GUI, mainly intended for installing APKs. The part that is handling the logic and installation process is part of Android, exactly said its located in com.android.server.pm, therefore, access to Android system is needed.
 
 Q: Is it compatible with WSA?  
 A: Yes 
