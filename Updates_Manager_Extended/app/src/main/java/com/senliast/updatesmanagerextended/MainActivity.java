@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -149,7 +150,8 @@ public class MainActivity extends AppCompatActivity {
     // Check if Xposed is active, read settings or create settings file, if not yet, and set GUI state.
     public void updateGui() {
         if (myPreferencesManager.testPreferences()) {
-            if (myPreferencesManager.getBooleanPreference("preferencesCreated", false)) {
+            SharedPreferences preferences = myPreferencesManager.getSharedPreferences();
+            if (!preferences.contains("preferencesCreated")) {
                 myPreferencesManager.setBooleanPreference("preferencesCreated", true);
                 myPreferencesManager.setBooleanPreference("moduleEnabled", true);
                 myPreferencesManager.setBooleanPreference("isUpdatesManagerExtendedPreferencesFile", true);
