@@ -12,7 +12,7 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public class XposedMain implements IXposedHookLoadPackage {
 
-    private static final String listenPackage = "com.android.server.pm";
+    private static final String listenPackage = "android";
     public String appAboutToUpdate = "";
     public String appsToBlockUpdates = "";
 
