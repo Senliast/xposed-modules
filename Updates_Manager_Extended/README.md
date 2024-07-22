@@ -18,12 +18,12 @@ The main reason for creating this module was aggressive auto-update policy of Go
 ## Compatibility
 App stores: ALL  
 CPUs: arm, arm64, x86, x64  
-Android versions: guaranted to work on AOSP Android 12-14. It will NOT work on Android 11 and below. It will probably work on OEM skins (Samsung, MIUI), as long as the Android version matches, but no guaranty.  
+Android versions: guaranted to work on AOSP Android 13-14. Should work on Android 12. Will NOT work on Android 11 and below. It will probably work on OEM skins (Samsung, MIUI), as long as the Android version matches, but no guaranty.  
 
 
 
 ## Download
-You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Updates-Manager-Extended-v1.3.
+You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Updates-Manager-Extended-v1.4.
 
 
 
