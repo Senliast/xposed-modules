@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -88,7 +89,11 @@ public class MainActivity extends AppCompatActivity {
                 MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorBackground, Color.WHITE)
         };
         trackColorStateListForSwitch = new ColorStateList(colorStatesForSwitch, trackColorsForSwitch);
-        registerReceiver(mReceiver, mFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(mReceiver, mFilter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(mReceiver, mFilter);
+        }
 
         switchModuleEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

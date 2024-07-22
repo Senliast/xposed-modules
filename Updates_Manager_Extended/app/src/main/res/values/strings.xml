@@ -13,7 +13,7 @@
     <string name="import_settings">Import settings</string>
     <string name="export_settings">Export settings</string>
     <string name="about_app">About this app</string>
-    <string name="about_app_part_1" translatable="false">Updates Manager Extended v1.3</string>
+    <string name="about_app_part_1" translatable="false">Updates Manager Extended v1.4</string>
     <string name="about_app_part_2">This is an Xposed module, that allows you to block app updates (including automatic updates) for specific apps, no matter from which app store they were installed. After selecting apps, that should be blocked from updates, the app store will still detect updates for these apps, but will be unable to install these. Do note, it will as well not be possible to update selected apps with an APK.</string>
     <string name="about_app_part_3">Created by Senliast,</string>
     <string name="about_app_part_4" translatable="false">https://github.com/Senliast/xposed-modules/tree/main/Updates_Manager_Extended</string>
