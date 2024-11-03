@@ -3,6 +3,7 @@ package com.senliast.disablefingerprintwhenscreenoff;
 import androidx.annotation.NonNull;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -53,5 +54,19 @@ public class Main implements IXposedHookLoadPackage {
                         param.setResult(false);
                     }
                 });
+
+        hookAllMethods(LockIconViewControllerClass,
+                "actionableDownEventStartedOnView", new XC_MethodHook() {
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        param.setResult(false);
+                    }
+                });
+
+        XposedHelpers.findAndHookMethod(
+                "com.android.keyguard.LockIconViewController",
+                lpparam.classLoader,
+                "onLongPress",
+                XC_MethodReplacement.DO_NOTHING
+        );
     }
 }
