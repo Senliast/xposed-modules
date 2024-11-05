@@ -1,12 +1,10 @@
 package com.senliast.disablefingerprintwhenscreenoff;
 
-import androidx.annotation.NonNull;
 import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XC_MethodReplacement;
 
 import static de.robv.android.xposed.XposedBridge.hookAllMethods;
 import static de.robv.android.xposed.XposedHelpers.findClass;
@@ -21,18 +19,16 @@ public class Main implements IXposedHookLoadPackage {
         if (!lpparam.packageName.equals(listenPackage)) return;
 
         Class<?> KeyguardUpdateMonitorClass = findClass("com.android.keyguard.KeyguardUpdateMonitor", lpparam.classLoader);
+        Class<?> LockIconViewControllerClass = findClass("com.android.keyguard.LockIconViewController", lpparam.classLoader);
 
         hookAllMethods(KeyguardUpdateMonitorClass,
                 "shouldListenForFingerprint", new XC_MethodHook() {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        if(!getBooleanField(param.thisObject, "mDeviceInteractive"))
-                        {
+                        if (!getBooleanField(param.thisObject, "mDeviceInteractive")) {
                             param.setResult(false);
                         }
                     }
                 });
-
-        Class<?> LockIconViewControllerClass = findClass("com.android.keyguard.LockIconViewController", lpparam.classLoader);
 
         hookAllMethods(LockIconViewControllerClass,
                 "inLockIconArea", new XC_MethodHook() {
@@ -55,18 +51,28 @@ public class Main implements IXposedHookLoadPackage {
                     }
                 });
 
-        hookAllMethods(LockIconViewControllerClass,
-                "actionableDownEventStartedOnView", new XC_MethodHook() {
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        param.setResult(false);
-                    }
-                });
-
         XposedHelpers.findAndHookMethod(
                 "com.android.keyguard.LockIconViewController",
                 lpparam.classLoader,
                 "onLongPress",
                 XC_MethodReplacement.DO_NOTHING
         );
+
+        XposedHelpers.findAndHookMethod("com.android.systemui.doze.DozeTriggers",
+                lpparam.classLoader,
+                "onSensor",
+                int.class,
+                float.class,
+                float.class,
+                float[].class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        Object wakeReason = param.args[0];
+                        if ((int) wakeReason == 10) {
+                            param.setResult(null);
+                        }
+                    }
+                });
     }
 }
