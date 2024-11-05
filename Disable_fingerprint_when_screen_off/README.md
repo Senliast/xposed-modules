@@ -3,10 +3,10 @@
 This module disables the recognizing of fingeprint, when the screen is off (including AOD), preventing unwanted unlocks or failed attempts, that leads to biometric lockout. Works for physical and under-display fingerpint sensors. The module doesnt have UI, it just works once enabled.
 
 ## Compatibility
-Tested on AOSP Android 13 with LSPosed.
+Tested on AOSP Android 13, 14 with LSPosed.
 
 ## Download
-You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Disable-fingerprint-when-screen-off-v1.0.
+You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Disable-fingerprint-when-screen-off-v4.0.
 
 ## Installation
 1. Install the APK.
