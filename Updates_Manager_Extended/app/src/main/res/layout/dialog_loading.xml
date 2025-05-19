@@ -24,6 +24,7 @@
         android:layout_height="19dp"
         android:layout_marginBottom="16dp"
         android:text="@string/please_wait"
+        android:textColor="@color/text_adaptive"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

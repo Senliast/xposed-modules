@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Updates Manager Extended</string>
     <string name="app_status_not_loaded">Modul nicht geladen. Entweder wurde Xposed nicht gefunden, ist zu alt, oder Modul ist nicht in Xposed Manager aktiviert</string>
     <string name="app_status_loaded_disabled">Modul geladen, aber deaktiviert</string>
     <string name="app_status_loaded_enabled">Modul geladen und aktiv</string>
@@ -14,12 +13,16 @@
     <string name="import_settings">Einstellungen importieren</string>
     <string name="export_settings">Einstellungen exportieren</string>
     <string name="about_app">Über diese App</string>
-    <string name="about_app_part_2">Das ist ein Xposed-Modul, der es ermöglicht, Updates (inkl. automatische Updates) für ausgewählte Apps zu blockieren, egal aus welchem App-Laden diese installiert wurden. Nach dem Auswählen der Apps, für die Updates blockiert weden sollen, wird der App-Laden zwar die Updates weiterhin finden, diese werden jedoch nicht installiert. Bitte Beachten Sie, dass es auch nicht möglich sein wird, die ausgwählte Apps mit einem APK zu aktualisieren.</string>
-    <string name="about_app_part_3">Entwickelt bei Senliast,</string>
+    <string name="about_app_part_2">Das ist ein Xposed-Modul, der es ermöglicht, Updates (inkl. automatische Updates) für ausgewählte Apps zu blockieren, egal aus welchem App-Laden diese installiert wurden. Nach dem Auswählen der Apps, für die Updates blockiert weden sollen, wird der App-Laden zwar die Updates weiterhin finden, diese werden jedoch nicht installiert. Bitte beachten Sie, dass es auch nicht möglich sein wird, die ausgwählte Apps mit einem APK zu aktualisieren.</string>
+    <string name="about_app_part_4">Entwickelt von Senliast,</string>
     <string name="please_wait">Bitte warten...</string>
     <string name="preferences_successfully_imported">"Einstellungen erfolgreich aus der Datei importiert: "</string>
     <string name="not_a_valid_preferences_file">"Dies ist keine Updates Manager Extended-Einstellungen-Datei: "</string>
     <string name="error_importing_preferences">"Fehler beim Importieren von Einstellungen: "</string>
     <string name="preferences_successfully_exported">"Einstellungen erfolgreich in die Datei exportiert: "</string>
     <string name="error_exporting_preferences">"Fehler beim Exportieren von Einstellungen: "</string>
+    <string name="app_status_waiting_for_reboot">Modul inaktiv, da es aktualisiert wurde, und das Gerät noch nicht neu gestartet wurde. Alle Updates sind zugelassen! Bitte starten Sie das Gerät neu, damit das Modul wieder funktioniert.</string>
+    <string name="welcome_message_title">Willkomen bei Updates Manager Extended Xposed-Modul</string>
+    <string name="ok">OK</string>
+    <string name="info_always_reboot_after_update">Bitte, nachdem Sie dieses Modul aktualisieren, starten Sie immer das Gerät neu, damit das Modul weiterhin funktioniert.</string>
 </resources>

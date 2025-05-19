@@ -6,15 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/switchBlockAppUpdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/imageViewAppIcon"
         android:layout_width="50dp"
@@ -34,7 +25,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:text="Subtitle"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="@color/text_adaptive"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/switchBlockAppUpdate"
@@ -49,11 +40,20 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:text="Title"
-        android:textColor="@android:color/black"
+        android:textColor="@color/text_adaptive"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/textViewPackageName"
         app:layout_constraintEnd_toStartOf="@+id/switchBlockAppUpdate"
         app:layout_constraintStart_toEndOf="@+id/imageViewAppIcon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/switchBlockAppUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

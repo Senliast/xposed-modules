@@ -14,6 +14,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="@string/back"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,6 +25,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="@string/about_app_part_1"
+        android:textColor="@color/text_adaptive"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonBack" />
@@ -36,6 +38,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:text="@string/about_app_part_2"
+        android:textColor="@color/text_adaptive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewAboutPart1" />
@@ -47,7 +50,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:text="@string/about_app_part_3"
+        android:text="@string/info_always_reboot_after_update"
+        android:textColor="@color/text_adaptive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewAboutPart2" />
@@ -57,13 +61,27 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/about_app_part_4"
+        android:textColor="@color/text_adaptive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAboutPart3" />
+
+    <TextView
+        android:id="@+id/textViewAboutPart5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:autoLink="web"
         android:linksClickable="true"
-        android:text="@string/about_app_part_4"
+        android:text="@string/about_app_part_5"
+        android:textColor="@color/text_adaptive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAboutPart3" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewAboutPart4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

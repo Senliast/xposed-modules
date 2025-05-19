@@ -25,7 +25,7 @@ public class AboutActivity extends AppCompatActivity {
     private Button buttonBack;
     SpannableString spannableString;
     ClickableSpan clickableSpan;
-    private TextView textViewAboutPart4;
+    private TextView textViewAboutPart5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,18 +48,23 @@ public class AboutActivity extends AppCompatActivity {
 
         buttonBack.setBackgroundColor(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorAccent, getColor(R.color.primary)));
         findViewById(R.id.activityAbout).setBackgroundColor(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorBackground, getColor(R.color.background)));
-        textViewAboutPart4 = findViewById(R.id.textViewAboutPart4);
-
-        spannableString = new SpannableString(getText(R.string.about_app_part_4));
+        textViewAboutPart5 = findViewById(R.id.textViewAboutPart5);
+        spannableString = new SpannableString(getText(R.string.about_app_part_5));
         clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.about_app_part_4)));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.about_app_part_5)));
                 startActivity(browserIntent);
             }
         };
         spannableString.setSpan(clickableSpan, 0, getString(R.string.about_app_part_4).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        textViewAboutPart4.setText(spannableString);
-        textViewAboutPart4.setMovementMethod(LinkMovementMethod.getInstance());
+        textViewAboutPart5.setText(spannableString);
+        textViewAboutPart5.setMovementMethod(LinkMovementMethod.getInstance());
+
+        if (Utils.isDarkModeActive()) {
+            findViewById(R.id.activityAbout).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_surface));
+        } else {
+            findViewById(R.id.activityAbout).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_surface));
+        }
     }
 }

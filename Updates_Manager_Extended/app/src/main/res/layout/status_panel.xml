@@ -6,16 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/imageViewStatusPanelBackground"
+    <com.senliast.updatesmanagerextended.MyObjectBackgroundView
+        android:id="@+id/viewStatusPanelBackground"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:alpha="0.3"
+        android:alpha="0.5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/status_panel_background_red" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewStatusPanelSymbol"
@@ -34,9 +33,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:text="@string/app_status_not_loaded"
+        android:textColor="@color/text_adaptive"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/imageViewStatusPanelBackground"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageViewStatusPanelSymbol"
         app:layout_constraintTop_toTopOf="parent" />
 

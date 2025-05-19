@@ -49,4 +49,9 @@ public class MyObjectBackgroundView extends View {
 
         canvas.drawRoundRect(0, 0, width, height, cornerRadius, cornerRadius, paint);
     }
+
+    public void setRectangleColor(int color) {
+        paint.setColor(color);
+        invalidate();
+    }
 }

@@ -1,8 +1,11 @@
 package com.senliast.updatesmanagerextended;
 
+import android.app.UiModeManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.TypedValue;
+
+import com.senliast.MyApplication;
 
 public class Utils {
     public static float convertDpToFloat(Context context, int dpValue) {
@@ -21,5 +24,15 @@ public class Utils {
         int blue = Color.blue(color);
 
         return Color.argb(alpha, red, green, blue);
+    }
+
+    public static boolean isDarkModeActive() {
+        UiModeManager uiModeManager = (UiModeManager) MyApplication.getAppContext().getSystemService(Context.UI_MODE_SERVICE);
+        int mode = uiModeManager.getNightMode();
+        if (mode == UiModeManager.MODE_NIGHT_YES) {
+            return true;
+        } else  {
+            return false;
+        }
     }
 }

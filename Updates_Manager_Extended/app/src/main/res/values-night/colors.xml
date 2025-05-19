@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme colors -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="primary">#2196F3</color>
+    <color name="secondary">#7C2196F3</color>
+    <color name="background">#D7104168</color>
+    <color name="text_adaptive">#C8FFFFFF</color>
+    <color name="splash">#000000</color>
+    <color name="splash_text">#FFFFFF</color>
+</resources>
