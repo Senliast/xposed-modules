@@ -22,8 +22,8 @@ android {
         applicationId "com.senliast.updatesmanagerextended"
         minSdk 24
         targetSdk 34
-        versionCode 5
-        versionName '1.4'
+        versionCode 6
+        versionName '2.0'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -50,6 +50,7 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    implementation 'com.google.android.material:material:1.12.0'
 
     compileOnly files('lib/api-82.jar')
     compileOnly files('lib/api-82-sources.jar')

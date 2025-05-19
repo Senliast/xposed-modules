@@ -13,6 +13,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="@string/back"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toStartOf="@+id/inputFieldFilter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,6 +26,7 @@
         android:layout_marginTop="20dp"
         android:backgroundTint="#2196F3"
         android:text="@string/blocked_first"
+        android:textColor="@color/text_adaptive"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/switchShowSystemApps" />
 
@@ -36,23 +38,10 @@
         android:layout_marginTop="20dp"
         android:backgroundTint="#2196F3"
         android:text="@string/show_system_apps"
+        android:textColor="@color/text_adaptive"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonBack" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/viewAppList"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageViewHintSymbol"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchBlockedFirst" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/inputFieldFilter"
@@ -62,33 +51,23 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:hint="@string/filter_apps"
+        android:textColor="@color/text_adaptive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/buttonBack"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewHintAppSelection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/viewAppList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
         android:layout_marginStart="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="@string/hint_app_selection"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageViewHintSymbol"
-        app:layout_constraintTop_toBottomOf="@+id/viewAppList"
-        app:layout_constraintVertical_bias="0.765" />
-
-    <ImageView
-        android:id="@+id/imageViewHintSymbol"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textViewHintAppSelection"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewAppList"
-        app:srcCompat="@drawable/info_icon" />
+        app:layout_constraintTop_toBottomOf="@+id/switchBlockedFirst" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,7 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import com.senliast.MyApplication;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -29,6 +30,12 @@ public class AppListItemAdapter extends RecyclerView.Adapter<AppListItemAdapter.
     public AppListItemAdapter(List<AppListItem> itemList) {
         this.itemList = itemList;
     }
+    private int[][] colorStatesForSwitch;
+    private int[] trackColorsForSwitch;
+    private int[] thumbColorsForSwitch;
+    private ColorStateList trackColorStateListForSwitch;
+    private ColorStateList thumbColorStateListForSwitch;
+
 
 
     @NonNull
@@ -40,11 +47,30 @@ public class AppListItemAdapter extends RecyclerView.Adapter<AppListItemAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+        colorStatesForSwitch = new int[][] {
+                new int[] { android.R.attr.state_checked },
+                new int[] { -android.R.attr.state_checked }
+        };
+        trackColorsForSwitch = new int[] {
+                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary),
+                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_secondary)
+        };
+
+        thumbColorsForSwitch = new int[] {
+                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container),
+                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_secondary_container)
+        };
+
+        trackColorStateListForSwitch = new ColorStateList(colorStatesForSwitch, trackColorsForSwitch);
+        thumbColorStateListForSwitch = new ColorStateList(colorStatesForSwitch, thumbColorsForSwitch);
+
         AppListItem item = itemList.get(position);
         holder.imageViewAppIcon.setImageDrawable(item.getAppIcon());
         holder.titleTextView.setText(item.getTitle());
         holder.packageNameTextView.setText(item.getPackageName());
         holder.switchBlockAppUpdate.setChecked(item.getGuiSwitch());
+        holder.switchBlockAppUpdate.setTrackTintList(trackColorStateListForSwitch);
+        holder.switchBlockAppUpdate.setThumbTintList(thumbColorStateListForSwitch);
 
         holder.switchBlockAppUpdate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -59,12 +85,12 @@ public class AppListItemAdapter extends RecyclerView.Adapter<AppListItemAdapter.
                         appsToBlockUpdates.remove(holder.packageNameTextView.getText().toString());
                     }
                 }
-                // Notify ListView about changes
                 myPreferencesManager.setStringPreference("appsToBlockUpdates", String.join(",", appsToBlockUpdates));
+                // Notify ListView about changes
                 Intent intent = new Intent("com.senliast.updatesmanagerextended.BROADCAST");
                 intent.putExtra("type", "event");
                 intent.putExtra("event_name", "on_app_switch_toggled");
-                MyApplication.getAppContext().sendBroadcast(intent);
+                LocalBroadcastManager.getInstance(MyApplication.getAppContext()).sendBroadcast(intent);
             }
         });
     }

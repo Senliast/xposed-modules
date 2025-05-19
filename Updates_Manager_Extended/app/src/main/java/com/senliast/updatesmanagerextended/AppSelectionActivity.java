@@ -3,16 +3,13 @@ package com.senliast.updatesmanagerextended;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import com.google.android.material.color.MaterialColors;
@@ -40,6 +38,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -55,14 +54,15 @@ public class AppSelectionActivity extends AppCompatActivity {
     private MyPreferencesManager myPreferencesManager = new MyPreferencesManager();
     private List<String> appsToBlockUpdates = new ArrayList<>();
     private Button buttonBack;
-    private AlertDialog.Builder builder;
-    private View viewDialogLoading;
-    private AlertDialog alertDialogDialogLoading;
     private int[][] colorStatesForSwitch;
     private int[] trackColorsForSwitch;
-    private ColorStateList colorStateListForSwitch;
+    private int[] thumbColorsForSwitch;
+    private ColorStateList trackColorStateListForSwitch;
+    private ColorStateList thumbColorStateListForSwitch;
     private LinearProgressIndicator linearProgressIndicatorLoading;
-
+    private AlertDialog dialogLoading;
+    private View viewDialogLoading;
+    AlertDialog.Builder builder;
     private final IntentFilter mFilter = new IntentFilter("com.senliast.updatesmanagerextended.BROADCAST");
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -86,12 +86,14 @@ public class AppSelectionActivity extends AppCompatActivity {
         });
 
         buttonBack = findViewById(R.id.buttonBack);
+
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+
         textInputEditText = findViewById(R.id.inputFieldFilter);
         switchShowSystemApps = findViewById(R.id.switchShowSystemApps);
         viewAppList = findViewById(R.id.viewAppList);
@@ -99,35 +101,22 @@ public class AppSelectionActivity extends AppCompatActivity {
         viewAppList.setLayoutManager(new LinearLayoutManager(this));
         viewAppList.setAdapter(appListItemAdapter);
         switchBlockedFirst = findViewById(R.id.switchBlockedFirst);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(mReceiver, mFilter, Context.RECEIVER_NOT_EXPORTED);
-        } else {
-            registerReceiver(mReceiver, mFilter);
-        }
-        switchShowSystemApps = findViewById(R.id.switchShowSystemApps);
-        switchBlockedFirst = findViewById(R.id.switchBlockedFirst);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, mFilter);
         colorStatesForSwitch = new int[][] {
                 new int[] { android.R.attr.state_checked },
                 new int[] { -android.R.attr.state_checked }
         };
         trackColorsForSwitch = new int[] {
-                MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorAccent, getColor(R.color.primary)),
-                MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorBackground, Color.WHITE)
+                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary),
+                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_secondary)
         };
-        colorStateListForSwitch = new ColorStateList(colorStatesForSwitch, trackColorsForSwitch);
-        builder = new AlertDialog.Builder(this);
-        viewDialogLoading = getLayoutInflater().inflate(R.layout.dialog_loading, null);
-        alertDialogDialogLoading = builder.create();
-        builder.setView(viewDialogLoading);
-        alertDialogDialogLoading.setCancelable(false);
-        alertDialogDialogLoading.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                return keyCode == KeyEvent.KEYCODE_BACK;
-            }
-        });
-        alertDialogDialogLoading = builder.create();
-        linearProgressIndicatorLoading = viewDialogLoading.findViewById(R.id.progressBar);
+
+        thumbColorsForSwitch = new int[] {
+                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container),
+                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_secondary_container)
+        };
+        trackColorStateListForSwitch = new ColorStateList(colorStatesForSwitch, trackColorsForSwitch);
+        thumbColorStateListForSwitch = new ColorStateList(colorStatesForSwitch, thumbColorsForSwitch);
 
         switchShowSystemApps.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -165,12 +154,30 @@ public class AppSelectionActivity extends AppCompatActivity {
         });
 
         buttonBack.setBackgroundColor(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorAccent, getColor(R.color.primary)));
-        switchShowSystemApps.setTrackTintList(colorStateListForSwitch);
-        switchBlockedFirst.setTrackTintList(colorStateListForSwitch);
-        findViewById(R.id.appSelection).setBackgroundColor(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorBackground, getColor(R.color.background)));
-        viewDialogLoading.findViewById(R.id.dialogLoading).setBackgroundColor(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorBackground, getColor(R.color.background)));
+        switchShowSystemApps.setTrackTintList(trackColorStateListForSwitch);
+        switchShowSystemApps.setThumbTintList(thumbColorStateListForSwitch);
+        switchBlockedFirst.setTrackTintList(trackColorStateListForSwitch);
+        switchBlockedFirst.setThumbTintList(thumbColorStateListForSwitch);
+
+        builder = new AlertDialog.Builder(this);
+        viewDialogLoading = getLayoutInflater().inflate(R.layout.dialog_loading, null);
+        builder.setView(viewDialogLoading);
+        builder.setCancelable(false);
+        dialogLoading = builder.create();
+        dialogLoading.setOnKeyListener((dialogInterface, keyCode, event) -> keyCode == KeyEvent.KEYCODE_BACK);
+        linearProgressIndicatorLoading = viewDialogLoading.findViewById(R.id.progressBar);
         linearProgressIndicatorLoading.setIndicatorColor(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorAccent, getColor(R.color.primary)));
         linearProgressIndicatorLoading.setTrackColor(Utils.changeColorAlpha(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorAccent, getColor(R.color.primary)), 30));
+        if (Utils.isDarkModeActive()) {
+            findViewById(R.id.appSelection).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_surface));
+        } else {
+            findViewById(R.id.appSelection).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_surface));
+        }
+        if (Utils.isDarkModeActive()) {
+            viewDialogLoading.findViewById(R.id.dialogLoading).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_surface));
+        } else {
+            viewDialogLoading.findViewById(R.id.dialogLoading).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_surface));
+        }
 
         appsToBlockUpdates = new ArrayList<>(Arrays.asList((myPreferencesManager.getStringPreference("appsToBlockUpdates", "")).split(",")));
 
@@ -182,7 +189,7 @@ public class AppSelectionActivity extends AppCompatActivity {
     }
 
     private void updateAppList(Integer includeSystemApps) {
-        alertDialogDialogLoading.show();
+        dialogLoading.show();
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(new Runnable() {
@@ -217,7 +224,7 @@ public class AppSelectionActivity extends AppCompatActivity {
                     public void run() {
                         updateAppListToShow();
                         appListItemAdapter.notifyDataSetChanged();
-                        alertDialogDialogLoading.dismiss();
+                        dialogLoading.dismiss();
                     }
                 });
             }
@@ -256,4 +263,6 @@ public class AppSelectionActivity extends AppCompatActivity {
                 -> o2.getGuiSwitch().compareTo(
                 o1.getGuiSwitch()));
     }
+
+
 }

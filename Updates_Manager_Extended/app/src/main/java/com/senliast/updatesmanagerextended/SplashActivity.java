@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
@@ -21,14 +22,19 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.splashActivity), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activitySplash), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        String videoPath = "";
         VideoView videoView = findViewById(R.id.videoView);
-        String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.start_animation;
+        if (Utils.isDarkModeActive()) {
+            videoPath = "android.resource://" + getPackageName() + "/" + R.raw.start_animation_dark;
+        } else {
+            videoPath = "android.resource://" + getPackageName() + "/" + R.raw.start_animation_light;
+        }
         Uri uri = Uri.parse(videoPath);
         videoView.setVideoURI(uri);
         TextView textView = findViewById(R.id.textAppTitle);

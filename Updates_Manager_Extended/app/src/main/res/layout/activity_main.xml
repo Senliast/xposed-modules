@@ -2,10 +2,76 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activityAbout"
+    android:id="@+id/activityMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
+
+    <Button
+        android:id="@+id/buttonSelectBlacklistedApps"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/select_blacklisted_apps"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mobvSwitchEnableModule" />
+
+    <Button
+        android:id="@+id/buttonImportSettings"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/import_settings"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/buttonExportSettings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonSelectBlacklistedApps" />
+
+    <Button
+        android:id="@+id/buttonExportSettings"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/export_settings"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonImportSettings"
+        app:layout_constraintTop_toBottomOf="@+id/buttonSelectBlacklistedApps" />
+
+    <Button
+        android:id="@+id/buttonAbout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/about_app"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonImportSettings" />
+
+    <FrameLayout
+        android:id="@+id/layoutStatusPanel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/switchEnableModule"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
 
     <view
         android:id="@+id/mobvSwitchEnableModule"
@@ -26,69 +92,9 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="@string/enable_module"
+        android:textColor="@color/text_adaptive"
         app:layout_constraintStart_toStartOf="@+id/mobvSwitchEnableModule"
         app:layout_constraintTop_toBottomOf="@+id/layoutStatusPanel" />
-
-    <FrameLayout
-        android:id="@+id/layoutStatusPanel"
-        android:layout_width="0dp"
-        android:layout_height="90dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/switchEnableModule"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </FrameLayout>
-
-    <Button
-        android:id="@+id/buttonSelectBlacklistedApps"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="@string/select_blacklisted_apps"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mobvSwitchEnableModule" />
-
-    <Button
-        android:id="@+id/buttonImportSettings"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/import_settings"
-        app:layout_constraintEnd_toStartOf="@+id/buttonExportSettings"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonSelectBlacklistedApps" />
-
-    <Button
-        android:id="@+id/buttonExportSettings"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="@string/export_settings"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonImportSettings"
-        app:layout_constraintTop_toBottomOf="@+id/buttonSelectBlacklistedApps" />
-
-    <Button
-        android:id="@+id/buttonAbout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="@string/about_app"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonImportSettings" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

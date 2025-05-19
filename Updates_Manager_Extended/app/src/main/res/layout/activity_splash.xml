@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/splashActivity"
+    android:id="@+id/activitySplash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@color/splash">
 
     <TextView
         android:id="@+id/textAppTitle"
@@ -17,7 +17,7 @@
         android:layout_marginBottom="50dp"
         android:alpha="0"
         android:text="Updates Manager Extended"
-        android:textColor="#989898"
+        android:textColor="@color/splash_text"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
