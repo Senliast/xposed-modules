@@ -9,10 +9,10 @@ public class MyApplication extends Application {
 
     public void onCreate() {
         super.onCreate();
-        MyApplication.context = getApplicationContext();
+        context = getApplicationContext();
     }
 
     public static Context getAppContext() {
-        return MyApplication.context;
+        return context;
     }
 }

@@ -1,92 +1,106 @@
 package com.senliast.updatesmanagerextended;
 
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 
-import com.google.android.material.materialswitch.MaterialSwitch;
-
-import com.google.android.material.color.MaterialColors;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.google.android.material.textfield.TextInputEditText;
-import com.senliast.MyApplication;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class AppSelectionActivity extends AppCompatActivity {
 
-    private ArrayList<AppInfo> appList;
-    private List<AppListItem> appListToShow = new ArrayList<>();
-    private TextInputEditText textInputEditText;
-    private MaterialSwitch switchShowSystemApps;
-    private MaterialSwitch switchBlockedFirst;
-    private RecyclerView viewAppList;
-    private AppListItemAdapter appListItemAdapter;
-    private MyPreferencesManager myPreferencesManager = new MyPreferencesManager();
-    private List<String> appsToBlockUpdates = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private AppAdapter appAdapter;
+    private List<AppInfo> appList;
+    private List<AppInfo> filteredAppList;
+    private Set<String> toggledApps;
+    private boolean showSystemApps = false;
+    private boolean sortToggledFirst = false;
+    private SearchView searchView;
     private Button buttonBack;
-    private int[][] colorStatesForSwitch;
-    private int[] trackColorsForSwitch;
-    private int[] thumbColorsForSwitch;
-    private ColorStateList trackColorStateListForSwitch;
-    private ColorStateList thumbColorStateListForSwitch;
-    private LinearProgressIndicator linearProgressIndicatorLoading;
-    private AlertDialog dialogLoading;
+    MyPreferencesManager myPreferencesManager = new MyPreferencesManager();
+    private MaterialAlertDialogBuilder builder;
     private View viewDialogLoading;
-    AlertDialog.Builder builder;
-    private final IntentFilter mFilter = new IntentFilter("com.senliast.updatesmanagerextended.BROADCAST");
-    BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getExtras().getString("type").equals("event") && intent.getExtras().getString("event_name").equals("on_app_switch_toggled")) {
-                appsToBlockUpdates = new ArrayList<>(Arrays.asList((myPreferencesManager.getStringPreference("appsToBlockUpdates", "")).split(",")));
-                updateAppListToShow();
-            }
-        }
-    };
+    private AlertDialog alertDialogDialogLoading;
+    private LinearProgressIndicator linearProgressIndicatorLoading;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_app_selection);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.appSelection), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activityAppSelection), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        buttonBack = findViewById(R.id.buttonBack);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setVerticalScrollBarEnabled(true);
+        viewDialogLoading = getLayoutInflater().inflate(R.layout.dialog_loading, null);
+        builder = new MaterialAlertDialogBuilder(this);
+        alertDialogDialogLoading = builder.create();
+        builder.setView(viewDialogLoading);
+        alertDialogDialogLoading = builder.create();
+        linearProgressIndicatorLoading = viewDialogLoading.findViewById(R.id.progressBar);
+        searchView = findViewById(R.id.searchView);
+        setupSearchView();
+        appList = new ArrayList<>();
+        filteredAppList = new ArrayList<>();
+        toggledApps = loadToggledApps();
+        loadApps();
 
+        appAdapter = new AppAdapter(filteredAppList, toggledApps, new AppAdapter.OnToggleListener() {
+            @Override
+            public void onToggle(String packageName, boolean isChecked) {
+                if (isChecked) {
+                    toggledApps.add(packageName);
+                } else {
+                    toggledApps.remove(packageName);
+                }
+                saveToggledApps();
+                if (sortToggledFirst) {
+                    sortApps();
+                    filterApps(searchView.getQuery().toString());
+                    appAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        recyclerView.setAdapter(appAdapter);
+
+        buttonBack = findViewById(R.id.buttonBack);
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,175 +108,138 @@ public class AppSelectionActivity extends AppCompatActivity {
             }
         });
 
-        textInputEditText = findViewById(R.id.inputFieldFilter);
-        switchShowSystemApps = findViewById(R.id.switchShowSystemApps);
-        viewAppList = findViewById(R.id.viewAppList);
-        appListItemAdapter = new AppListItemAdapter(appListToShow);
-        viewAppList.setLayoutManager(new LinearLayoutManager(this));
-        viewAppList.setAdapter(appListItemAdapter);
-        switchBlockedFirst = findViewById(R.id.switchBlockedFirst);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, mFilter);
-        colorStatesForSwitch = new int[][] {
-                new int[] { android.R.attr.state_checked },
-                new int[] { -android.R.attr.state_checked }
-        };
-        trackColorsForSwitch = new int[] {
-                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary),
-                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_secondary)
-        };
-
-        thumbColorsForSwitch = new int[] {
-                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container),
-                MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_secondary_container)
-        };
-        trackColorStateListForSwitch = new ColorStateList(colorStatesForSwitch, trackColorsForSwitch);
-        thumbColorStateListForSwitch = new ColorStateList(colorStatesForSwitch, thumbColorsForSwitch);
-
-        switchShowSystemApps.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    updateAppList(1);
-                } else {
-                    updateAppList(0);
-                }
-            }
-        });
-
-        switchBlockedFirst.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                updateAppListToShow();
-                appListItemAdapter.notifyDataSetChanged();
-            }
-        });
-
-        textInputEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                updateAppListToShow();
-                appListItemAdapter.notifyDataSetChanged();
-            }
-        });
-
-        buttonBack.setBackgroundColor(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorAccent, getColor(R.color.primary)));
-        switchShowSystemApps.setTrackTintList(trackColorStateListForSwitch);
-        switchShowSystemApps.setThumbTintList(thumbColorStateListForSwitch);
-        switchBlockedFirst.setTrackTintList(trackColorStateListForSwitch);
-        switchBlockedFirst.setThumbTintList(thumbColorStateListForSwitch);
-
-        builder = new AlertDialog.Builder(this);
-        viewDialogLoading = getLayoutInflater().inflate(R.layout.dialog_loading, null);
-        builder.setView(viewDialogLoading);
-        builder.setCancelable(false);
-        dialogLoading = builder.create();
-        dialogLoading.setOnKeyListener((dialogInterface, keyCode, event) -> keyCode == KeyEvent.KEYCODE_BACK);
-        linearProgressIndicatorLoading = viewDialogLoading.findViewById(R.id.progressBar);
-        linearProgressIndicatorLoading.setIndicatorColor(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorAccent, getColor(R.color.primary)));
-        linearProgressIndicatorLoading.setTrackColor(Utils.changeColorAlpha(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorAccent, getColor(R.color.primary)), 30));
-        if (Utils.isDarkModeActive()) {
-            findViewById(R.id.appSelection).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_surface));
-        } else {
-            findViewById(R.id.appSelection).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_surface));
-        }
-        if (Utils.isDarkModeActive()) {
-            viewDialogLoading.findViewById(R.id.dialogLoading).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_surface));
-        } else {
-            viewDialogLoading.findViewById(R.id.dialogLoading).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_surface));
-        }
-
-        appsToBlockUpdates = new ArrayList<>(Arrays.asList((myPreferencesManager.getStringPreference("appsToBlockUpdates", "")).split(",")));
-
-        if (switchShowSystemApps.isChecked()) {
-            updateAppList(1);
-        } else {
-            updateAppList(0);
-        }
+        appAdapter.notifyDataSetChanged();
     }
 
-    private void updateAppList(Integer includeSystemApps) {
-        dialogLoading.show();
-
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.submit(new Runnable() {
+    private void setupSearchView() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void run() {
-                ArrayList<AppInfo> appListI = new ArrayList<>();
-                PackageManager packageManager = getPackageManager();
-                List<PackageInfo> packages = packageManager.getInstalledPackages(PackageManager.GET_META_DATA);
-
-                if (includeSystemApps == 0) {
-                    for (PackageInfo packageInfo : packages) {
-                        if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
-                            Drawable appIconI = packageInfo.applicationInfo.loadIcon(packageManager);
-                            String appNameI = packageInfo.applicationInfo.loadLabel(packageManager).toString();
-                            String packageNameI = packageInfo.packageName;
-                            appListI.add(new AppInfo(appIconI, appNameI, packageNameI));
-                        }
-                    }
-                } else {
-                    for (PackageInfo packageInfo : packages) {
-                        Drawable appIconI = packageInfo.applicationInfo.loadIcon(packageManager);
-                        String appNameI = packageInfo.applicationInfo.loadLabel(packageManager).toString();
-                        String packageNameI = packageInfo.packageName;
-                        appListI.add(new AppInfo(appIconI, appNameI, packageNameI));
-                    }
-                }
-
-                appList = appListI;
-
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateAppListToShow();
-                        appListItemAdapter.notifyDataSetChanged();
-                        dialogLoading.dismiss();
-                    }
-                });
+            public boolean onQueryTextSubmit(String query) {
+                filterApps(query);
+                return true;
             }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterApps(newText);
+                return true;
+            }
+        });
+
+        searchView.setOnCloseListener(() -> {
+            filterApps("");
+            return false;
         });
     }
 
-    private void updateAppListToShow() {
-        // Get blacklisted apps, look for search words in both package name and title name and insert the data into array.
-        // As long as list doesn't get new entries, adapter doesn't has to be notified.
-        appListToShow.clear();
-        if (textInputEditText.getText().toString() != "") {
-            appList.forEach(item -> {
-                if ((item.getAppName().toString().toLowerCase().contains(textInputEditText.getText().toString().toLowerCase())) || (item.getPackageName().toString().toLowerCase().contains(textInputEditText.getText().toString().toLowerCase()))) {
-                    appListToShow.add(new AppListItem(item.getAppIcon(), item.getAppName().toString(), item.getPackageName().toString(), appsToBlockUpdates.toString().contains(item.getPackageName().toString())));
+    private void filterApps(String query) {
+        filteredAppList.clear();
+        if (query == null || query.trim().isEmpty()) {
+            filteredAppList.addAll(appList);
+        } else {
+            String lowerQuery = query.toLowerCase();
+            for (AppInfo app : appList) {
+                if (app.getAppName().toLowerCase().contains(lowerQuery) ||
+                        app.getPackageName().toLowerCase().contains(lowerQuery)) {
+                    filteredAppList.add(app);
+                }
+            }
+        }
+        appAdapter.notifyDataSetChanged();
+    }
+
+    private void loadApps() {
+        alertDialogDialogLoading.show();
+        alertDialogDialogLoading.setCancelable(false);
+        alertDialogDialogLoading.setCanceledOnTouchOutside(false);
+        alertDialogDialogLoading.setOnKeyListener((dialog, keyCode, event) -> true);
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+
+            appList.clear();
+            filteredAppList.clear();
+            PackageManager pm = getPackageManager();
+            List<ApplicationInfo> apps = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+            for (ApplicationInfo app : apps) {
+                if (showSystemApps || (app.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
+                    String appName = app.loadLabel(pm).toString();
+                    Drawable appIcon = app.loadIcon(pm);
+                    String packageName = app.packageName;
+                    appList.add(new AppInfo(appName, packageName, appIcon));
+                }
+            }
+
+            sortApps();
+            filteredAppList.addAll(appList);
+
+            runOnUiThread(() -> {
+                appAdapter.notifyDataSetChanged();
+                alertDialogDialogLoading.dismiss();
+            });
+        });
+        executor.shutdown();
+    }
+
+    private void sortApps() {
+        if (sortToggledFirst) {
+            Collections.sort(appList, new Comparator<AppInfo>() {
+                @Override
+                public int compare(AppInfo app1, AppInfo app2) {
+                    boolean isToggled1 = toggledApps.contains(app1.getPackageName());
+                    boolean isToggled2 = toggledApps.contains(app2.getPackageName());
+                    if (isToggled1 && !isToggled2) return -1;
+                    if (!isToggled1 && isToggled2) return 1;
+                    return app1.getAppName().compareToIgnoreCase(app2.getAppName());
                 }
             });
         } else {
-            appList.forEach(item -> {
-                appListToShow.add(new AppListItem(item.getAppIcon(), item.getAppName().toString(), item.getPackageName().toString(), appsToBlockUpdates.toString().contains(item.getPackageName().toString())));
-            });
-        }
-        sortAppListItemsByAlpabet(appListToShow);
-        if (switchBlockedFirst.isChecked()) {
-            sortAppListItemsByState(appListToShow);
+            Collections.sort(appList, (app1, app2) -> app1.getAppName().compareToIgnoreCase(app2.getAppName()));
         }
     }
 
-    private void sortAppListItemsByAlpabet(List<AppListItem> list) {
-        list.sort((o1, o2)
-                -> o1.getTitle().compareTo(
-                o2.getTitle()));
+    private Set<String> loadToggledApps() {
+        Set<String> toggled = new HashSet<>();
+        toggled.addAll(Arrays.asList((myPreferencesManager.getStringPreference("appsToBlockUpdates", "")).split(",")));
+        return toggled;
     }
 
-    private void sortAppListItemsByState(List<AppListItem> list) {
-        list.sort((o1, o2)
-                -> o2.getGuiSwitch().compareTo(
-                o1.getGuiSwitch()));
+    private void saveToggledApps() {
+        myPreferencesManager.setStringPreference("appsToBlockUpdates", String.join(",", toggledApps));
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.app_selection_menu, menu);
+        menu.findItem(R.id.actionShowSystemApps).setChecked(showSystemApps);
+        menu.findItem(R.id.actionSortToggledFirst).setChecked(sortToggledFirst);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.actionShowSystemApps) {
+            showSystemApps = !showSystemApps;
+            item.setChecked(showSystemApps);
+            loadApps();
+            filterApps(searchView.getQuery().toString());
+            appAdapter.notifyDataSetChanged();
+            return true;
+        } else if (id == R.id.actionSortToggledFirst) {
+            sortToggledFirst = !sortToggledFirst;
+            item.setChecked(sortToggledFirst);
+            sortApps();
+            filterApps(searchView.getQuery().toString());
+            appAdapter.notifyDataSetChanged();
+            return true;
+        } else if (id == android.R.id.home) {
+            searchView.setQuery("", false);
+            searchView.clearFocus();
+            filterApps("");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

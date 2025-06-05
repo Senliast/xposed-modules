@@ -11,9 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.material.color.MaterialColors;
-import com.senliast.MyApplication;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -46,8 +43,6 @@ public class AboutActivity extends AppCompatActivity {
             }
         });
 
-        buttonBack.setBackgroundColor(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorAccent, getColor(R.color.primary)));
-        findViewById(R.id.activityAbout).setBackgroundColor(MaterialColors.getColor(MyApplication.getAppContext(), android.R.attr.colorBackground, getColor(R.color.background)));
         textViewAboutPart5 = findViewById(R.id.textViewAboutPart5);
         spannableString = new SpannableString(getText(R.string.about_app_part_5));
         clickableSpan = new ClickableSpan() {
@@ -60,11 +55,5 @@ public class AboutActivity extends AppCompatActivity {
         spannableString.setSpan(clickableSpan, 0, getString(R.string.about_app_part_4).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         textViewAboutPart5.setText(spannableString);
         textViewAboutPart5.setMovementMethod(LinkMovementMethod.getInstance());
-
-        if (Utils.isDarkModeActive()) {
-            findViewById(R.id.activityAbout).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_surface));
-        } else {
-            findViewById(R.id.activityAbout).setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_surface));
-        }
     }
 }

@@ -5,6 +5,7 @@
     android:id="@+id/activityAbout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/Theme.Material3.DynamicColors.DayNight"
     tools:context=".AboutActivity">
 
     <Button
@@ -14,7 +15,6 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="@string/back"
-        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,7 +25,6 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="@string/about_app_part_1"
-        android:textColor="@color/text_adaptive"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonBack" />
@@ -38,7 +37,6 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:text="@string/about_app_part_2"
-        android:textColor="@color/text_adaptive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewAboutPart1" />
@@ -51,7 +49,6 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:text="@string/info_always_reboot_after_update"
-        android:textColor="@color/text_adaptive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewAboutPart2" />
@@ -64,7 +61,6 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:text="@string/about_app_part_4"
-        android:textColor="@color/text_adaptive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewAboutPart3" />
@@ -78,7 +74,6 @@
         android:autoLink="web"
         android:linksClickable="true"
         android:text="@string/about_app_part_5"
-        android:textColor="@color/text_adaptive"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
