@@ -5,6 +5,7 @@
     android:id="@+id/activityMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/Theme.Material3.DynamicColors.DayNight"
     tools:context=".MainActivity">
 
 
@@ -16,7 +17,6 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:text="@string/select_blacklisted_apps"
-        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mobvSwitchEnableModule" />
@@ -28,7 +28,6 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="@string/import_settings"
-        android:textColor="@color/white"
         app:layout_constraintEnd_toStartOf="@+id/buttonExportSettings"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonSelectBlacklistedApps" />
@@ -41,7 +40,6 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:text="@string/export_settings"
-        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/buttonImportSettings"
         app:layout_constraintTop_toBottomOf="@+id/buttonSelectBlacklistedApps" />
@@ -54,7 +52,6 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:text="@string/about_app"
-        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonImportSettings" />
@@ -81,6 +78,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
+        android:alpha="0.5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layoutStatusPanel" />
@@ -92,7 +90,6 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="@string/enable_module"
-        android:textColor="@color/text_adaptive"
         app:layout_constraintStart_toStartOf="@+id/mobvSwitchEnableModule"
         app:layout_constraintTop_toBottomOf="@+id/layoutStatusPanel" />
 

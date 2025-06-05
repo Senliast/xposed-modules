@@ -23,8 +23,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 public class PreferencesBackupManager {
 
-    private static final int EXPORT_SETTINGS_REQUEST_CODE = 101;
-    private static final int IMPORT_SETTINGS_REQUEST_CODE = 102;
     private Context context;
     private MyPreferencesManager myPreferencesManager = new MyPreferencesManager();
     private ActivityResultLauncher<Intent> exportSettingsLauncher;

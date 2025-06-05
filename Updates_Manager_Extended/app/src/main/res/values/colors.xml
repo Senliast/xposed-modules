@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Light theme colors -->
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="primary">#2196f3</color>
-    <color name="secondary">#7C2196F3</color>
-    <color name="background">#322196F3</color>
-    <color name="text_adaptive">#000000</color>
-    <color name="splash">#FFFFFF</color>
+    <color name="splash_background">#FFFFFF</color>
     <color name="splash_text">#989898</color>
 </resources>

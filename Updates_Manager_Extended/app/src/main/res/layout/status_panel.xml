@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/statusPanel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <com.senliast.updatesmanagerextended.MyObjectBackgroundView
-        android:id="@+id/viewStatusPanelBackground"
+        android:id="@+id/mobvStatusPanelBackground"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:alpha="0.5"
@@ -37,7 +36,6 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:text="@string/app_status_not_loaded"
-        android:textColor="@color/text_adaptive"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageViewStatusPanelSymbol"

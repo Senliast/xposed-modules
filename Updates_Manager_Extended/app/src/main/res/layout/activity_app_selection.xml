@@ -1,73 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/appSelection"
+    android:id="@+id/activityAppSelection"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/buttonBack"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/back"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toStartOf="@+id/inputFieldFilter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/switchBlockedFirst"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="#2196F3"
-        android:text="@string/blocked_first"
-        android:textColor="@color/text_adaptive"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchShowSystemApps" />
-
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/switchShowSystemApps"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="#2196F3"
-        android:text="@string/show_system_apps"
-        android:textColor="@color/text_adaptive"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonBack" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/inputFieldFilter"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:hint="@string/filter_apps"
-        android:textColor="@color/text_adaptive"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonBack"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.Material3.DynamicColors.DayNight">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/viewAppList"
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchBlockedFirst" />
+        android:layout_height="match_parent"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbarThumbVertical="?attr/colorPrimary"
+        android:scrollbarTrackVertical="?attr/colorSurfaceVariant"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.Material3.DynamicColors.DayNight">
+
+            <Button
+                android:id="@+id/buttonBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/back" />
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:iconifiedByDefault="false"
+                app:queryHint="@string/filter_apps">
+
+            </androidx.appcompat.widget.SearchView>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

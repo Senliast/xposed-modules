@@ -23,7 +23,7 @@ Android versions: guaranted to work on AOSP Android 13-14. Should work on Androi
 
 
 ## Download
-You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Updates-Manager-Extended-v2.0.
+You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Updates-Manager-Extended-v3.0.
 
 
 

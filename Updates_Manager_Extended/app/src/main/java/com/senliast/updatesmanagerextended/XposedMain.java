@@ -1,5 +1,8 @@
 package com.senliast.updatesmanagerextended;
 
+import java.util.Arrays;
+import java.util.List;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
@@ -12,7 +15,7 @@ public class XposedMain implements IXposedHookLoadPackage {
 
     private static final String listenPackage = "android";
     public String appAboutToUpdate = "";
-    public String appsToBlockUpdates = "";
+    public List<String> appsToBlockUpdates;
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -32,7 +35,7 @@ public class XposedMain implements IXposedHookLoadPackage {
                     XSharedPreferences preferences = new XSharedPreferences("com.senliast.updatesmanagerextended", "Preferences");
 
                     if (preferences.getBoolean("moduleEnabled", false)) {
-                        appsToBlockUpdates = preferences.getString("appsToBlockUpdates", "");
+                        appsToBlockUpdates = Arrays.asList((preferences.getString("appsToBlockUpdates", "")).split(","));
 
                         if (!appsToBlockUpdates.equals("")) {
                             appAboutToUpdate = String.valueOf(getObjectField(param.thisObject, "mPackageName"));
