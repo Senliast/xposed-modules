@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light theme colors -->
+    <color name="splash_background">#FFFFFF</color>
+    <color name="splash_text">#989898</color>
+    <color name="buttons_icons_color">#FFFFFF</color>
+</resources>

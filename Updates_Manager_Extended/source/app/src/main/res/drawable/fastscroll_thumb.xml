@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Pressed / dragged state -->
+    <item android:state_pressed="true">
+
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/colorSecondary" />
+            <corners android:radius="10dp" />
+            <size
+                android:width="10dp"
+            android:height="60dp" />
+        </shape>
+    </item>
+
+    <!-- Default / idle state -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/colorPrimary" />
+            <corners android:radius="10dp" />
+            <size
+                android:width="10dp"
+            android:height="60dp" />
+        </shape>
+    </item>
+</selector>

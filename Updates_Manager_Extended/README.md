@@ -1,10 +1,7 @@
 # Updates Manager Extended  
-<p align="center">
-  <img width="460" height="300" src="https://github.com/Senliast/xposed-modules/blob/main/Updates_Manager_Extended/docs/logo.jpg">
-</p>
 
 ## About
-This is an Xposed module, that allows you to block app updates (including automatic updates) for specific apps, no matter from which app store they were installed. After selecting apps, that should be blocked from updates, the app store will still detect updates for these apps, but will be unable to install these. The specialty of this module is that apps, that are blocked from updates still can verify their license in Google Play and make in-app purchases. It means, you can disable updates for your licensed apps from Google Play without breaking their license. Another advantage of this module is that it doesnt break SafetyNet / Play Integrity as it doesnt hook Google Play or Google Play Services.
+This is an Xposed module, that allows you to block app updates (including automatic updates) for specific apps, no matter from which app store they were installed. After selecting apps, that should be blocked from updates, the app store will still detect updates for these apps, but will be unable to install these. You can create groups of apps and select which app stores are allowed to update which apps. There are as well timers - you can temporarily disable the group or the module and then just perform needed updates - no need to go back and re-enable group / module, it will happen automatically - this way, you will as well not forget to do it. The specialty of this module is that apps, that are blocked from updates still can verify their license in Google Play and make in-app purchases. It means, you can disable updates for your licensed apps from Google Play without breaking their license. Another advantage of this module is that it doesnt break SafetyNet / Play Integrity as it doesnt hook Google Play or Google Play Services.
 
 The main reason for creating this module was aggressive auto-update policy of Google Play, ignoring and resetting the auto-update setting for specific apps, set by user, see proof:
  - https://android.stackexchange.com/questions/216208/play-store-silently-updates-apps-although-auto-update-is-disabled
@@ -13,19 +10,17 @@ The main reason for creating this module was aggressive auto-update policy of Go
  - https://forums.androidcentral.com/threads/google-play-store-just-auto-updated-all-my-apps-on-its-own-wtf.273772/
  - https://eu.community.samsung.com/t5/galaxy-s22-series/google-play-apps-keep-automatically-updating-when-i-ve-turned/td-p/7338657
 
-
-
 ## Compatibility
-App stores: ALL  
-CPUs: arm, arm64, x86, x64  
-Android versions: guaranted to work on AOSP Android 13-14. Should work on Android 12. Will NOT work on Android 11 and below. Will probably work on OEM skins (Samsung, MIUI), as long as the Android version matches, but no guaranty.  
-
-
+ - app stores: ALL  
+ - CPUs: arm, arm64, x86, x64  
+ - Android versions:
+   - guaranteed to work on AOSP Android 13-14
+   - should work on AOSP Android 12, 15, 16
+   - will NOT work on Android 11 and below
+   - will probably work on OEM skins (Samsung, MIUI), as long as the Android version matches, but no guaranty
 
 ## Download
-You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Updates-Manager-Extended-v3.1.
-
-
+You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Updates-Manager-Extended-v4.0.
 
 ## Installation
 1. Install the APK.
@@ -33,13 +28,9 @@ You can download latest release from: https://github.com/Senliast/xposed-modules
    - Android system
 4. Reboot the device
 
-
-
 ## Uninstalling
-1. Remove the APK.
+1. Remove the app.
 2. Reboot the device.
-
-
 
 ## Questions and answers
 Q: How does it work?  
@@ -51,7 +42,5 @@ A: The Package Installer application is more a GUI, mainly intended for installi
 Q: Is it compatible with WSA?  
 A: Yes 
 
-
-
 ## Key words
-Google Play, disable android app updates, disable android app auto updates, Google Play updates, android app updates blocker, block android app updates, Xposed, LSPosed, Root, Maigisk
+Google Play, disable android app updates, disable android app auto updates, Google Play updates, android app updates blocker, block android app updates, Xposed, LSPosed, Root, Magisk
