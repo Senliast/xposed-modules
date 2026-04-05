@@ -67,7 +67,7 @@ public class XposedMain implements IXposedHookLoadPackage {
                         //
                         // Its probably still possible to find it out, but apps with the regular APK installation permissions cannot update apps
                         // automatically, and this module is intended mainly for disabling automatic updates. If its needed - its still possible
-                        // to block the updates of this app via APK by blocking updates by Package installer. So will will take the
+                        // to block the updates of this app via APK by blocking updates by Package installer. So we will take the
                         // "mInstallerPackageName" variable.
 
                         Object session = param.thisObject;
@@ -131,7 +131,7 @@ public class XposedMain implements IXposedHookLoadPackage {
                 if (group.getStatus().equals("enabled_immediately") || (group.getStatus().equals("enabled_since") && System.currentTimeMillis() >= group.getStatusTime())) {
                     appsToBlockUpdates = Arrays.asList(group.getAppsToBlockUpdates().split(","));
                     installationSourcesToBlock = Arrays.asList(group.getInstallationSources().split(","));
-                    if (appsToBlockUpdates.contains(app) && (installationSourcesToBlock.contains(source) ||group.getBlockAllInstallationSources())) {
+                    if (appsToBlockUpdates.contains(app) && (installationSourcesToBlock.contains(source) || group.getBlockAllInstallationSources())) {
                         return true;
                     }
                 }
