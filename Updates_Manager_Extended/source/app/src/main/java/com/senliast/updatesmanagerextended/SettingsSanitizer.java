@@ -1,7 +1,7 @@
-// Remove uninstalled apps from the blacklist. Main intention is to prevent the situation,
-// where user uninstalled an app and is unable to install this app later again, because the
-// module cannot differentiate between installing and updating process and will block
-// installation as well.
+// Remove uninstalled apps from the blacklist and installation source list. Main intention is
+// to prevent the situation, where user uninstalled an app and is unable to install this app later
+// again, because the module cannot differentiate between installing and updating process and will
+// block installation as well.
 
 package com.senliast.updatesmanagerextended;
 

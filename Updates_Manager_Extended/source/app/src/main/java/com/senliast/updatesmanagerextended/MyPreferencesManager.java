@@ -1,8 +1,8 @@
 // The preferences manager can only handle the settings of current version of the app (except the
-// "importAllFromUri()" and "upgradePreferencesDatabase()" methods). Therefore,
-// "upgradePreferencesDatabase()" must be called before any other operations (except
-// "testPreferences()"), otherwise it can lead to unexpected app behaviour or corruption of
-// preferences database. The method determines itself, whether an upgrade is needed or not.
+// "importAllFromUri()", "upgradePreferencesDatabase()" and "testPreferences()" methods). Therefore,
+// "upgradePreferencesDatabase()" must be called before calling any other methods, otherwise it can
+// lead to unexpected app behaviour or corruption of preferences database. The method determines
+// itself, whether an upgrade is needed or not.
 //
 // The preferences are first read and saved without changes by "importAllFromUri()". This method is
 // responsible only for importing of preferences. Then, they will be upgraded by
@@ -46,7 +46,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class MyPreferencesManager {
-    private final int APP_VERSION_CODE = 9;
+    private final int APP_VERSION_CODE = 10;
     public String getStringPreference(String a, String b) {
         SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         return preferences.getString(a, b);
@@ -222,6 +222,7 @@ public class MyPreferencesManager {
                 // a valid UME preferences file. The check of the "isUpdatesManagerExtendedBackup" signature is
                 // not possible here, we will check it later and will for now assume, its an older UME version.
                 // It doesnt meter which one it is, because settings format is the same. So setting version to 0.
+                // All version codes between 0 and 8 will be treated like 0.
                 preferencesCodeVersion = 0;
             } else {
                 // It means, that either reading of "preferences.APP_VERSION_CODE" value failed or another error
@@ -235,9 +236,61 @@ public class MyPreferencesManager {
 
         // ========================================
 
-        // UME 4.0 (version code 9)
+        // UME 3.1 and below (version code 8 and below)
         // ========================================
-        if (preferencesCodeVersion == 9) {
+        if (preferencesCodeVersion == 0) {
+            try {
+                SharedPreferences.Editor editor = getSharedPreferences().edit();
+                Boolean isUpdatesManagerExtendedPreferencesFile = false;
+
+                DocumentFile documentFile = DocumentFile.fromSingleUri(context, uri);
+                if (documentFile != null && documentFile.exists()) {
+                    editor.clear();
+                    String line;
+                    InputStreamReader reader = new InputStreamReader(context.getContentResolver().openInputStream(uri));
+                    BufferedReader bufferedReader = new BufferedReader(reader);
+                    while ((line = bufferedReader.readLine()) != null) {
+                        String[] parts = line.split(":");
+                        if (parts.length == 2) {
+                            String key = parts[0].trim();
+                            String value = parts[1].trim();
+                            if (value.equals("true") || value.equals("false")) {
+                                if (key.equals("isUpdatesManagerExtendedPreferencesFile") && value.equals("true")) {
+                                    isUpdatesManagerExtendedPreferencesFile = true;
+                                } else {
+                                    editor.putBoolean(key, Boolean.parseBoolean(value));
+                                }
+                            } else {
+                                editor.putString(key, value);
+                            }
+                        }
+                    }
+                    bufferedReader.close();
+                    if (isUpdatesManagerExtendedPreferencesFile) {
+                        editor.apply();
+
+                        Intent intent = new Intent("com.senliast.updatesmanagerextended.BROADCAST");
+                        intent.putExtra("type", "event");
+                        intent.putExtra("event_name", "on_preferences_imported");
+
+                        LocalBroadcastManager.getInstance(MyApplication.getAppContext())
+                                .sendBroadcast(intent);
+
+                        Toast.makeText(context, MyApplication.getAppContext().getText(R.string.preferences_successfully_imported) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(context, MyApplication.getAppContext().getText(R.string.not_a_valid_preferences_file) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            } catch (IOException e) {
+                Toast.makeText(context, MyApplication.getAppContext().getText(R.string.error_importing_preferences) + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
+        // ========================================
+
+        // UME 4.0 - 4.1 (version code 9 - 10)
+        // ========================================
+        if (preferencesCodeVersion == 9 || preferencesCodeVersion == 10) {
             try {
                 InputStream inputStream = MyApplication.getAppContext()
                         .getContentResolver().openInputStream(uri);
@@ -326,58 +379,6 @@ public class MyPreferencesManager {
         }
         // ========================================
 
-        // UME 3.1 and below (version code 8 and below)
-        // ========================================
-        if (preferencesCodeVersion == 0) {
-            try {
-                SharedPreferences.Editor editor = getSharedPreferences().edit();
-                Boolean isUpdatesManagerExtendedPreferencesFile = false;
-
-                DocumentFile documentFile = DocumentFile.fromSingleUri(context, uri);
-                if (documentFile != null && documentFile.exists()) {
-                    editor.clear();
-                    String line;
-                    InputStreamReader reader = new InputStreamReader(context.getContentResolver().openInputStream(uri));
-                    BufferedReader bufferedReader = new BufferedReader(reader);
-                    while ((line = bufferedReader.readLine()) != null) {
-                        String[] parts = line.split(":");
-                        if (parts.length == 2) {
-                            String key = parts[0].trim();
-                            String value = parts[1].trim();
-                            if (value.equals("true") || value.equals("false")) {
-                                if (key.equals("isUpdatesManagerExtendedPreferencesFile") && value.equals("true")) {
-                                    isUpdatesManagerExtendedPreferencesFile = true;
-                                } else {
-                                    editor.putBoolean(key, Boolean.parseBoolean(value));
-                                }
-                            } else {
-                                editor.putString(key, value);
-                            }
-                        }
-                    }
-                    bufferedReader.close();
-                    if (isUpdatesManagerExtendedPreferencesFile) {
-                        editor.apply();
-
-                        Intent intent = new Intent("com.senliast.updatesmanagerextended.BROADCAST");
-                        intent.putExtra("type", "event");
-                        intent.putExtra("event_name", "on_preferences_imported");
-
-                        LocalBroadcastManager.getInstance(MyApplication.getAppContext())
-                                .sendBroadcast(intent);
-
-                        Toast.makeText(context, MyApplication.getAppContext().getText(R.string.preferences_successfully_imported) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(context, MyApplication.getAppContext().getText(R.string.not_a_valid_preferences_file) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
-                    }
-                }
-            } catch (IOException e) {
-                Toast.makeText(context, MyApplication.getAppContext().getText(R.string.error_importing_preferences) + e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-            return;
-        }
-        // ========================================
-
         Toast.makeText(context, MyApplication.getAppContext().getText(R.string.error_importing_preferences) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
     }
     private void saveGroupsFromJson(String json) {
@@ -392,8 +393,8 @@ public class MyPreferencesManager {
 
     public void upgradePreferencesDatabase() {
         if (getBooleanPreference("preferencesCreated", false)) {
-            // From version code 8 (UME 3.1 and below)
-            if (getIntPreference("APP_VERSION_CODE", 0) <= 8) {
+            // From version code 8 and below (UME 3.1 and below)
+            if (getIntPreference("APP_VERSION_CODE", 0) == 0) {
                 setBooleanPreference("isFirstStart", !getBooleanPreference("welcomeMessageShown", false));
                 deletePreference("welcomeMessageShown");
                 List<String> appsToBlockUpdates = Arrays.asList((getStringPreference("appsToBlockUpdates", "")).split(","));
@@ -409,6 +410,11 @@ public class MyPreferencesManager {
                 setLongPreference("moduleStatusTime", 0L);
                 deletePreference("moduleEnabled");
                 setIntPreference("APP_VERSION_CODE", APP_VERSION_CODE);
+            }
+
+            // From version code 9 (UME 4.0)
+            if (getIntPreference("APP_VERSION_CODE", 0) == 9) {
+                setIntPreference("APP_VERSION_CODE", 10);
             }
         }
     }

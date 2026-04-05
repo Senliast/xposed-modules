@@ -20,12 +20,12 @@ The main reason for creating this module was aggressive auto-update policy of Go
    - will probably work on OEM skins (Samsung, MIUI), as long as the Android version matches, but no guaranty
 
 ## Download
-You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Updates-Manager-Extended-v4.0.
+You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Updates-Manager-Extended-v4.1.
 
 ## Installation
 1. Install the APK.
 2. Enable the module in LSPosed Manager, add to scope the following packages:
-   - Android system
+   - System Framework
 4. Reboot the device
 
 ## Uninstalling
