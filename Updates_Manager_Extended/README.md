@@ -20,7 +20,7 @@ The main reason for creating this module was aggressive auto-update policy of Go
    - will probably work on OEM skins (Samsung, MIUI), as long as the Android version matches, but no guaranty
 
 ## Download
-You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Updates-Manager-Extended-v4.1.
+You can download latest release from: https://github.com/Senliast/xposed-modules/releases/tag/Updates-Manager-Extended-v4.2.
 
 ## Installation
 1. Install the APK.

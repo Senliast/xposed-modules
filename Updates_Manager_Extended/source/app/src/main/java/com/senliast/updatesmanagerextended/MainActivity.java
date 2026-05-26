@@ -18,17 +18,19 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import com.senliast.MyApplication;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private View viewDialogWelcome;
     private AlertDialog alertDialogDialogWelcome;
     private Button buttonDialogWelcomeOkButton;
-    private final Integer APP_VERSION_CODE = 10;
+    private final Integer APP_VERSION_CODE = 11;
     private boolean switchModuleEnabledSwitchedListenerEnabled = true;
     private AlertDialog alertDialogDialogDisable;
     private View viewDialogDisable;
@@ -83,13 +85,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activityMain), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+
+            v.setPadding(
+                    systemBars.left,
+                    systemBars.top,
+                    systemBars.right,
+                    systemBars.bottom
+            );
+
             return insets;
         });
+        DynamicColors.applyToActivityIfAvailable(this);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        controller.setAppearanceLightStatusBars(!Utils.isDarkModeActive());
+        controller.setAppearanceLightNavigationBars(!Utils.isDarkModeActive());
 
         inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         viewStatusPanel = inflater.inflate(R.layout.panel_status, null);
@@ -269,9 +284,6 @@ public class MainActivity extends AppCompatActivity {
         // only once and "updateGui()" will then not call it again.
         switchModuleEnabledSwitchedListenerEnabled = false;
         if (myPreferencesManager.testPreferences()) {
-            // Always upgrade preferences database before doing anything with it.
-            myPreferencesManager.upgradePreferencesDatabase();
-
             createPreferences();
 
             if (myPreferencesManager.getStringPreference("moduleStatus", "disabled").equals("enabled_immediately") || (myPreferencesManager.getStringPreference("moduleStatus", "disabled").equals("enabled_since") && System.currentTimeMillis() >= myPreferencesManager.getLongPreference("moduleStatusTime", 0L))) {

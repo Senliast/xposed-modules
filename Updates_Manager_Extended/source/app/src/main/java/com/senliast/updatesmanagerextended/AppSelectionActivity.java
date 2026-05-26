@@ -2,25 +2,27 @@ package com.senliast.updatesmanagerextended;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import androidx.activity.EdgeToEdge;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import me.zhanghai.android.fastscroll.FastScroller;
 import me.zhanghai.android.fastscroll.FastScrollerBuilder;
@@ -52,18 +54,41 @@ public class AppSelectionActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private List<GroupInfo> groups = new ArrayList<>();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_app_selection);
-        DynamicColors.applyToActivityIfAvailable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activityAppSelection), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+
+            v.setPadding(
+                    systemBars.left,
+                    0,
+                    systemBars.right,
+                    systemBars.bottom
+            );
+
             return insets;
         });
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.appBarLayout), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            v.setPadding(
+                    v.getPaddingLeft(),
+                    systemBars.top,
+                    v.getPaddingRight(),
+                    v.getPaddingBottom()
+            );
+
+            return insets;
+        });
+        DynamicColors.applyToActivityIfAvailable(this);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        controller.setAppearanceLightStatusBars(!Utils.isDarkModeActive());
+        controller.setAppearanceLightNavigationBars(!Utils.isDarkModeActive());
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -100,7 +125,10 @@ public class AppSelectionActivity extends AppCompatActivity {
                     toggledApps.remove(packageName);
                 }
                 saveToggledApps();
-                sortApps();
+
+                if (sortToggledFirst) {
+                    sortApps();
+                }
             }
         });
         recyclerView.setAdapter(appAdapter);
@@ -182,7 +210,6 @@ public class AppSelectionActivity extends AppCompatActivity {
             finalAppList.addAll(appList);
 
             runOnUiThread(() -> {
-                appAdapter.notifyDataSetChanged();
                 filterApps();
                 sortApps();
                 alertDialogDialogLoading.dismiss();
@@ -206,6 +233,7 @@ public class AppSelectionActivity extends AppCompatActivity {
         } else {
             Collections.sort(finalAppList, (app1, app2) -> app1.getAppName().compareToIgnoreCase(app2.getAppName()));
         }
+        appAdapter.notifyItemRangeChanged(0, finalAppList.size());
     }
 
     private void loadToggledApps() {
@@ -239,7 +267,6 @@ public class AppSelectionActivity extends AppCompatActivity {
         } else if (id == R.id.actionSortToggledFirst) {
             sortToggledFirst = !sortToggledFirst;
             item.setChecked(sortToggledFirst);
-            filterApps();
             sortApps();
             return true;
         } else if (id == android.R.id.home) {

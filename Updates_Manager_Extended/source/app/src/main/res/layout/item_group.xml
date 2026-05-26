@@ -37,72 +37,93 @@
                 android:textStyle="bold"
                 app:layout_constraintBaseline_toBottomOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/buttonRename"
+                app:layout_constraintEnd_toStartOf="@id/llRenameDelete"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonRename"
-                style="@style/Widget.MaterialComponents.Button"
+            <LinearLayout
+                android:id="@+id/llRenameDelete"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginEnd="8dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                app:cornerRadius="24dp"
-                app:icon="@drawable/ic_pencil"
-                app:iconGravity="start"
-                app:iconPadding="0dp"
-                app:iconTint="@color/buttons_icons_color"
-                app:layout_constraintBaseline_toBottomOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/buttonDelete"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeWidth="0dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonDelete"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                app:cornerRadius="24dp"
-                app:icon="@drawable/ic_delete"
-                app:iconGravity="start"
-                app:iconPadding="0dp"
-                app:iconTint="@color/buttons_icons_color"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeWidth="0dp" />
+                app:layout_constraintTop_toTopOf="parent">
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonRename"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:insetLeft="0dp"
+                    android:insetTop="0dp"
+                    android:insetRight="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
+                    app:icon="@drawable/ic_pencil"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconTint="@color/buttons_icons_color"
+                    app:shapeAppearanceOverlay="@style/Shape.LeftButton" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonDelete"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:insetLeft="0dp"
+                    android:insetTop="0dp"
+                    android:insetRight="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
+                    app:icon="@drawable/ic_delete"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconTint="@color/buttons_icons_color"
+                    app:shapeAppearanceOverlay="@style/Shape.RightButton" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
+            android:id="@+id/llIsBa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSelectInstallationSources"
-                android:layout_width="match_parent"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:text="@string/select_installation_sources"
-                app:cornerRadius="20dp" />
+                app:shapeAppearanceOverlay="@style/Shape.LeftButton"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSelectBlacklistedApps"
-                android:layout_width="match_parent"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
+                android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:text="@string/select_blacklisted_apps"
-                app:cornerRadius="20dp" />
+                app:shapeAppearanceOverlay="@style/Shape.RightButton"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"/>
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -142,9 +163,6 @@
                 app:layout_constraintBottom_toBottomOf="@id/mobvSwitchEnableGroup"
                 app:layout_constraintEnd_toEndOf="@id/mobvSwitchEnableGroup"
                 app:layout_constraintTop_toTopOf="@id/mobvSwitchEnableGroup" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

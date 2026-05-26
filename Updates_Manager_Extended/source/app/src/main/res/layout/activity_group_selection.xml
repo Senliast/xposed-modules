@@ -25,15 +25,12 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
-
-    <!-- Round FAB with only "+" -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp"
-        android:contentDescription="Add new group"
         app:srcCompat="@android:drawable/ic_input_add" />
 
     <View
