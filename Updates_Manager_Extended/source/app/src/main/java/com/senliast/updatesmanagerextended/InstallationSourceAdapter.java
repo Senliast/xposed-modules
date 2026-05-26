@@ -20,7 +20,6 @@ public class InstallationSourceAdapter extends RecyclerView.Adapter<Installation
     private Set<String> toggledApps;
     private OnToggleListener toggleListener;
     private boolean isEnabled = true;
-    private MyPreferencesManager myPreferencesManager = new MyPreferencesManager();
 
     public interface OnToggleListener {
         void onToggle(String packageName, boolean isChecked);

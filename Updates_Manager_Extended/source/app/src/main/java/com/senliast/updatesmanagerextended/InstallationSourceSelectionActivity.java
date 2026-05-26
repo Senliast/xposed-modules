@@ -2,6 +2,7 @@ package com.senliast.updatesmanagerextended;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,13 +13,13 @@ import android.widget.CompoundButton;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.senliast.MyApplication;
 
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import me.zhanghai.android.fastscroll.FastScroller;
 import me.zhanghai.android.fastscroll.FastScrollerBuilder;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -61,14 +62,39 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_installation_source_selection);
-        DynamicColors.applyToActivityIfAvailable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activityInstallationSourceSelection), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+
+            v.setPadding(
+                    systemBars.left,
+                    0,
+                    systemBars.right,
+                    systemBars.bottom
+            );
+
             return insets;
         });
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.appBarLayout), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            v.setPadding(
+                    v.getPaddingLeft(),
+                    systemBars.top,
+                    v.getPaddingRight(),
+                    v.getPaddingBottom()
+            );
+
+            return insets;
+        });
+        DynamicColors.applyToActivityIfAvailable(this);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        controller.setAppearanceLightStatusBars(!Utils.isDarkModeActive());
+        controller.setAppearanceLightNavigationBars(!Utils.isDarkModeActive());
+
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -81,7 +107,6 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setVerticalScrollBarEnabled(true);
         recyclerView.setPadding(0, 0, 0, 0);
-
         FastScroller fastScroller = new FastScrollerBuilder(recyclerView)
                 .setThumbDrawable(getDrawable(R.drawable.fastscroll_thumb))
                 .setTrackDrawable(getDrawable(R.drawable.fastscroll_track))
@@ -117,9 +142,12 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
                     toggledApps.remove(packageName);
                 }
                 saveGroups();
-                sortApps();
+                if (sortToggledFirst) {
+                    sortApps();
+                }
             }
         });
+
         recyclerView.setAdapter(installationSourceAdapter);
         loadGroups();
         loadInstalledApps();
@@ -135,19 +163,22 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 groups.get(myPreferencesManager.getIntPreference("groupToEdit", 0)).setBlockAllInstallationSources(isChecked);
+                saveGroups();
+                sortApps();
+
                 if (isChecked) {
                     disableRecyclerView();
                 } else {
                     enableRecyclerView();
                 }
-                saveGroups();
             }
         });
-        switchBlockAll.setChecked(groups.get(myPreferencesManager.getIntPreference("groupToEdit", 0)).getBlockAllInstallationSources());
 
         if (groups.get(myPreferencesManager.getIntPreference("groupToEdit", 0)).getBlockAllInstallationSources()) {
+            switchBlockAll.setChecked(true);
             disableRecyclerView();
         } else {
+            switchBlockAll.setChecked(false);
             enableRecyclerView();
         }
     }
@@ -235,7 +266,6 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
             finalAppList.addAll(appList);
 
             runOnUiThread(() -> {
-                installationSourceAdapter.notifyDataSetChanged();
                 filterApps();
                 sortApps();
                 alertDialogDialogLoading.dismiss();
@@ -245,7 +275,7 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
     }
 
     private void sortApps() {
-        if (sortToggledFirst) {
+        if (sortToggledFirst && !switchBlockAll.isChecked()) {
             Collections.sort(finalAppList, new Comparator<InstallationSourceInfo>() {
                 @Override
                 public int compare(InstallationSourceInfo app1, InstallationSourceInfo app2) {
@@ -259,6 +289,7 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
         } else {
             Collections.sort(finalAppList, (app1, app2) -> app1.getAppName().compareToIgnoreCase(app2.getAppName()));
         }
+        installationSourceAdapter.notifyItemRangeChanged(0, finalAppList.size());
     }
 
     private void loadGroups() {
@@ -287,7 +318,6 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
         if (id == R.id.actionSortToggledFirst) {
             sortToggledFirst = !sortToggledFirst;
             item.setChecked(sortToggledFirst);
-            filterApps();
             sortApps();
             return true;
         } else if (id == android.R.id.home) {

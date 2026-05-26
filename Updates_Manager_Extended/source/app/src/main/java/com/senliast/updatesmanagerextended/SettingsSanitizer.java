@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class SettingsSanitizer extends AppCompatActivity {
+public class SettingsSanitizer {
 
     private List<String> appsToBlockUpdates;
     private List<String> installationSources;
@@ -28,7 +28,7 @@ public class SettingsSanitizer extends AppCompatActivity {
             groups = myPreferencesManager.getGroups();
             for (GroupInfo group : groups) {
                 appsToBlockUpdates = new ArrayList<>(Arrays.asList(group.getAppsToBlockUpdates().split(",")));
-                installationSources = new ArrayList<>(Arrays.asList(group.getAppsToBlockUpdates().split(",")));
+                installationSources = new ArrayList<>(Arrays.asList(group.getInstallationSources().split(",")));
                 Iterator<String> iteratorAppsToBlockUpdates = appsToBlockUpdates.iterator();
                 while (iteratorAppsToBlockUpdates.hasNext()) {
                     String item = iteratorAppsToBlockUpdates.next();

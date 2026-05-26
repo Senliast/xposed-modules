@@ -46,7 +46,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class MyPreferencesManager {
-    private final int APP_VERSION_CODE = 10;
+    private final int APP_VERSION_CODE = 11;
     public String getStringPreference(String a, String b) {
         SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         return preferences.getString(a, b);
@@ -288,9 +288,9 @@ public class MyPreferencesManager {
         }
         // ========================================
 
-        // UME 4.0 - 4.1 (version code 9 - 10)
+        // UME 4.0 - 4.2 (version code 9 - 11)
         // ========================================
-        if (preferencesCodeVersion == 9 || preferencesCodeVersion == 10) {
+        if (preferencesCodeVersion == 9 || preferencesCodeVersion == 10 || preferencesCodeVersion == 11) {
             try {
                 InputStream inputStream = MyApplication.getAppContext()
                         .getContentResolver().openInputStream(uri);
@@ -412,9 +412,9 @@ public class MyPreferencesManager {
                 setIntPreference("APP_VERSION_CODE", APP_VERSION_CODE);
             }
 
-            // From version code 9 (UME 4.0)
-            if (getIntPreference("APP_VERSION_CODE", 0) == 9) {
-                setIntPreference("APP_VERSION_CODE", 10);
+            // From version code 9 - 10 (UME 4.0 - 4.1)
+            if (getIntPreference("APP_VERSION_CODE", 0) == 9 || getIntPreference("APP_VERSION_CODE", 0) == 10) {
+                setIntPreference("APP_VERSION_CODE", APP_VERSION_CODE);
             }
         }
     }

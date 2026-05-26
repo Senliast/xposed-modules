@@ -35,53 +35,66 @@
 
                 </androidx.appcompat.widget.SearchView>
             </androidx.appcompat.widget.Toolbar>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <view
+                    android:id="@+id/mobvSwitchBlockAll"
+                    class="com.senliast.updatesmanagerextended.MyObjectBackgroundView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:alpha="0.5"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewBlockAll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/block_from_all"
+                    app:layout_constraintBottom_toBottomOf="@id/mobvSwitchBlockAll"
+                    app:layout_constraintStart_toStartOf="@id/mobvSwitchBlockAll"
+                    app:layout_constraintTop_toTopOf="@id/mobvSwitchBlockAll" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchBlockAll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/mobvSwitchBlockAll"
+                    app:layout_constraintEnd_toEndOf="@id/mobvSwitchBlockAll"
+                    app:layout_constraintTop_toTopOf="@id/mobvSwitchBlockAll" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         </com.google.android.material.appbar.AppBarLayout>
-
-        <view
-            android:id="@+id/mobvSwitchBlockAll"
-            class="com.senliast.updatesmanagerextended.MyObjectBackgroundView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:alpha="0.5"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@id/switchBlockAll"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
-
-        <TextView
-            android:id="@+id/textViewBlockAll"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:text="@string/block_from_all"
-            app:layout_constraintBottom_toBottomOf="@id/mobvSwitchBlockAll"
-            app:layout_constraintStart_toStartOf="@id/mobvSwitchBlockAll"
-            app:layout_constraintTop_toTopOf="@id/mobvSwitchBlockAll" />
-
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switchBlockAll"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-            app:layout_constraintEnd_toEndOf="@id/mobvSwitchBlockAll"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:scrollbars="none"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/switchBlockAll"
-            app:layout_constraintTop_toBottomOf="@id/switchBlockAll"
-            android:scrollbars="none"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
