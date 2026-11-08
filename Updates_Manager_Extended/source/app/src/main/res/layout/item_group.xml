@@ -53,16 +53,14 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonRename"
                     style="@style/Widget.Material3.Button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="2dp"
                     android:layout_weight="1"
                     android:insetLeft="0dp"
                     android:insetTop="0dp"
                     android:insetRight="0dp"
                     android:insetBottom="0dp"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp"
                     app:icon="@drawable/ic_pencil"
                     app:iconGravity="textStart"
                     app:iconPadding="0dp"
@@ -72,16 +70,14 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonDelete"
                     style="@style/Widget.Material3.Button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="2dp"
                     android:layout_weight="1"
                     android:insetLeft="0dp"
                     android:insetTop="0dp"
                     android:insetRight="0dp"
                     android:insetBottom="0dp"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp"
                     app:icon="@drawable/ic_delete"
                     app:iconGravity="textStart"
                     app:iconPadding="0dp"
@@ -132,8 +128,8 @@
             android:layout_marginTop="8dp">
 
             <view
-                android:id="@+id/mobvSwitchEnableGroup"
-                class="com.senliast.updatesmanagerextended.MyObjectBackgroundView"
+                android:id="@+id/obvSwitchEnableGroup"
+                class="com.senliast.updatesmanagerextended.ObjectBackgroundView"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -150,19 +146,19 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                app:layout_constraintBottom_toBottomOf="@id/mobvSwitchEnableGroup"
+                app:layout_constraintBottom_toBottomOf="@id/obvSwitchEnableGroup"
                 app:layout_constraintEnd_toStartOf="@id/switchToggle"
-                app:layout_constraintStart_toStartOf="@id/mobvSwitchEnableGroup"
-                app:layout_constraintTop_toTopOf="@id/mobvSwitchEnableGroup" />
+                app:layout_constraintStart_toStartOf="@id/obvSwitchEnableGroup"
+                app:layout_constraintTop_toTopOf="@id/obvSwitchEnableGroup" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchToggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="@id/mobvSwitchEnableGroup"
-                app:layout_constraintEnd_toEndOf="@id/mobvSwitchEnableGroup"
-                app:layout_constraintTop_toTopOf="@id/mobvSwitchEnableGroup" />
+                app:layout_constraintBottom_toBottomOf="@id/obvSwitchEnableGroup"
+                app:layout_constraintEnd_toEndOf="@id/obvSwitchEnableGroup"
+                app:layout_constraintTop_toTopOf="@id/obvSwitchEnableGroup" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

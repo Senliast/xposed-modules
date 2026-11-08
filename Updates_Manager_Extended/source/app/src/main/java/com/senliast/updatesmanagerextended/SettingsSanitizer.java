@@ -1,41 +1,28 @@
-// Remove uninstalled apps from the blacklist and installation source list. Main intention is
-// to prevent the situation, where user uninstalled an app and is unable to install this app later
-// again, because the module cannot differentiate between installing and updating process and will
-// block installation as well.
-
 package com.senliast.updatesmanagerextended;
 
 import android.content.pm.PackageManager;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.senliast.MyApplication;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class SettingsSanitizer {
+    private Set<String> installationSources;
+    private PreferencesManager preferencesManager = new PreferencesManager();
+    private List<Group> groups = new ArrayList<>();
 
-    private List<String> appsToBlockUpdates;
-    private List<String> installationSources;
-    private MyPreferencesManager myPreferencesManager = new MyPreferencesManager();
-    private List<GroupInfo> groups = new ArrayList<>();
-
-    public void sanitize() {
-        // Only if module is loaded and enabled.
-        if (myPreferencesManager.getStringPreference("moduleStatus", "disabled").equals("enabled_immediately") || (myPreferencesManager.getStringPreference("moduleStatus", "disabled").equals("enabled_since") && System.currentTimeMillis() >= myPreferencesManager.getLongPreference("moduleStatusTime", 0L))) {
-            groups = myPreferencesManager.getGroups();
-            for (GroupInfo group : groups) {
-                appsToBlockUpdates = new ArrayList<>(Arrays.asList(group.getAppsToBlockUpdates().split(",")));
-                installationSources = new ArrayList<>(Arrays.asList(group.getInstallationSources().split(",")));
-                Iterator<String> iteratorAppsToBlockUpdates = appsToBlockUpdates.iterator();
-                while (iteratorAppsToBlockUpdates.hasNext()) {
-                    String item = iteratorAppsToBlockUpdates.next();
-                    if (!isPackageInstalled(item.toString(), MyApplication.getAppContext().getPackageManager())) {
-                        iteratorAppsToBlockUpdates.remove();
-                    }
-                }
+    public synchronized void sanitize() {
+        if (preferencesManager.testPreferences()) {
+            if (preferencesManager.getBooleanPreference("preferencesCreated", false) && preferencesManager.getGroups() != null)
+            groups = preferencesManager.getGroups();
+            for (Group group : groups) {
+                installationSources = new HashSet<>();
+                installationSources.addAll(Arrays.asList(group.getInstallationSources().split(",")));
                 Iterator<String> iteratorInstallationSources = installationSources.iterator();
                 while (iteratorInstallationSources.hasNext()) {
                     String item = iteratorInstallationSources.next();
@@ -43,10 +30,9 @@ public class SettingsSanitizer {
                         iteratorInstallationSources.remove();
                     }
                 }
-                group.setAppsToBlockUpdates(String.join(",", appsToBlockUpdates));
                 group.setInstallationSources(String.join(",", installationSources));
             }
-            myPreferencesManager.saveGroups(groups);
+            preferencesManager.setGroups(groups);
         }
     }
 

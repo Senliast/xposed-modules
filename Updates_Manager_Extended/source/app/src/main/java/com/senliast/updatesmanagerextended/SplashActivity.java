@@ -20,7 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 public class SplashActivity extends AppCompatActivity {
-    MyPreferencesManager myPreferencesManager = new MyPreferencesManager();
+    PreferencesManager preferencesManager = new PreferencesManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +68,11 @@ public class SplashActivity extends AppCompatActivity {
             }, 0);
         });
 
-        if (myPreferencesManager.testPreferences()) {
+        if (preferencesManager.testPreferences()) {
             // Always upgrade preferences database before doing anything with it.
-            myPreferencesManager.upgradePreferencesDatabase();
+            preferencesManager.upgradePreferencesDatabase();
 
-            if (myPreferencesManager.getBooleanPreference("isFirstStart", true)) {
+            if (preferencesManager.getIsFirstStart()) {
                 videoView.start();
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -85,6 +85,7 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 finish();
             }
+
         } else {
             videoView.start();
             new Handler().postDelayed(new Runnable() {
@@ -95,5 +96,6 @@ public class SplashActivity extends AppCompatActivity {
                 }
             }, 1000);
         }
+
     }
 }

@@ -18,14 +18,14 @@ import java.util.List;
 
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
 
-    private final List<GroupInfo> groups;
+    private final List<Group> groups;
     private final GroupActionListener listener;
     private final Context context;
     private int rectangleColor = -1;
     private final CountdownTimerHelper.OnTimerFinishListener finishListener;
-    private MyPreferencesManager myPreferencesManager = new MyPreferencesManager();
+    private PreferencesManager preferencesManager = new PreferencesManager();
 
-    public GroupAdapter(List<GroupInfo> groups, GroupActionListener listener, Context context, CountdownTimerHelper.OnTimerFinishListener finishListener) {
+    public GroupAdapter(List<Group> groups, GroupActionListener listener, Context context, CountdownTimerHelper.OnTimerFinishListener finishListener) {
         this.groups = groups;
         this.listener = listener;
         this.context = context;
@@ -41,7 +41,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        GroupInfo group = groups.get(position);
+        Group group = groups.get(position);
 
         holder.textViewName.setText(group.getName());
         holder.textViewName.setSelected(true);
@@ -59,7 +59,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         // Remove listener to avoid loops
         holder.switchToggle.setOnCheckedChangeListener(null);
 
-        if (myPreferencesManager.getStringPreference("moduleStatus", "disabled").equals("enabled_immediately")  || (myPreferencesManager.getStringPreference("moduleStatus", "disabled").equals("enabled_since") && System.currentTimeMillis() >= myPreferencesManager.getLongPreference("moduleStatusTime", 0L))) {
+        if (preferencesManager.getStringPreference("moduleStatus", "disabled").equals("enabled_immediately")  || (preferencesManager.getStringPreference("moduleStatus", "disabled").equals("enabled_since") && System.currentTimeMillis() >= preferencesManager.getLongPreference("moduleStatusTime", 0L))) {
             if (groups.get(position).getStatus().equals("enabled_immediately") || (groups.get(position).getStatus().equals("enabled_since") && System.currentTimeMillis() >= groups.get(position).getStatusTime())) {
                 holder.switchToggle.setChecked(true);
                 holder.textViewStatus.setText(MyApplication.getAppContext().getText(R.string.group_status_enabled));
@@ -103,16 +103,16 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         });
 
         if (rectangleColor != -1) {
-            holder.mobvSwitchEnableGroup.setRectangleColor(
+            holder.obvSwitchEnableGroup.setRectangleColor(
                     ContextCompat.getColor(context, rectangleColor)
             );
         }
 
         if (Utils.isDarkModeActive()) {
-            holder.mobvSwitchEnableGroup.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary));
+            holder.obvSwitchEnableGroup.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary));
             holder.llCard.setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_secondary_container));
         } else {
-            holder.mobvSwitchEnableGroup.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_primary));
+            holder.obvSwitchEnableGroup.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_primary));
             holder.llCard.setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_secondary_container));
         }
     }
@@ -130,7 +130,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         TextView textViewName;
         Button buttonSelectInstallationSources, buttonSelectBlacklistedApps, buttonRename, buttonRemove;
         MaterialSwitch switchToggle;
-        MyObjectBackgroundView mobvSwitchEnableGroup;
+        ObjectBackgroundView obvSwitchEnableGroup;
         LinearLayout llCard;
         TextView textViewStatus;
         CountdownTimerHelper timerHelper = new CountdownTimerHelper();
@@ -143,7 +143,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
             switchToggle = itemView.findViewById(R.id.switchToggle);
             buttonRename = itemView.findViewById(R.id.buttonRename);
             buttonRemove = itemView.findViewById(R.id.buttonDelete);
-            mobvSwitchEnableGroup = itemView.findViewById(R.id.mobvSwitchEnableGroup);
+            obvSwitchEnableGroup = itemView.findViewById(R.id.obvSwitchEnableGroup);
             llCard = itemView.findViewById(R.id.llCard);
             textViewStatus = itemView.findViewById(R.id.textViewGroupStatus);
         }

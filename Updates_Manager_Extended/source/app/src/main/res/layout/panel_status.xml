@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:layerType="software">
 
-    <com.senliast.updatesmanagerextended.MyObjectBackgroundView
-        android:id="@+id/mobvStatusPanelBackground"
+    <com.senliast.updatesmanagerextended.ObjectBackgroundView
+        android:id="@+id/obvStatusPanelBackground"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:alpha="0.5"

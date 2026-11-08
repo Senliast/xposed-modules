@@ -49,13 +49,13 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
     private Set<String> toggledApps;
     private boolean sortToggledFirst = false;
     private SearchView searchView;
-    MyPreferencesManager myPreferencesManager = new MyPreferencesManager();
+    PreferencesManager preferencesManager = new PreferencesManager();
     private MaterialAlertDialogBuilder builder;
     private View viewDialogLoading;
     private AlertDialog alertDialogDialogLoading;
     private Toolbar toolbar;
-    private List<GroupInfo> groups = new ArrayList<>();
-    private MyObjectBackgroundView mobvSwitchBlockAll;
+    private List<Group> groups = new ArrayList<>();
+    private ObjectBackgroundView obvSwitchBlockAll;
     private MaterialSwitch switchBlockAll;
 
 
@@ -121,11 +121,11 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
         searchView = findViewById(R.id.searchView);
         setupSearchView();
 
-        mobvSwitchBlockAll = findViewById(R.id.mobvSwitchBlockAll);
+        obvSwitchBlockAll = findViewById(R.id.obvSwitchBlockAll);
         if (Utils.isDarkModeActive()) {
-            mobvSwitchBlockAll.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container));
+            obvSwitchBlockAll.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container));
         } else {
-            mobvSwitchBlockAll.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_primary_container));
+            obvSwitchBlockAll.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_primary_container));
         }
         switchBlockAll = findViewById(R.id.switchBlockAll);
 
@@ -162,7 +162,7 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
         switchBlockAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                groups.get(myPreferencesManager.getIntPreference("groupToEdit", 0)).setBlockAllInstallationSources(isChecked);
+                groups.get(AppGlobals.groupToEdit).setBlockAllInstallationSources(isChecked);
                 saveGroups();
                 sortApps();
 
@@ -174,7 +174,7 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
             }
         });
 
-        if (groups.get(myPreferencesManager.getIntPreference("groupToEdit", 0)).getBlockAllInstallationSources()) {
+        if (groups.get(AppGlobals.groupToEdit).getBlockAllInstallationSources()) {
             switchBlockAll.setChecked(true);
             disableRecyclerView();
         } else {
@@ -293,15 +293,15 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
     }
 
     private void loadGroups() {
-        groups.addAll(myPreferencesManager.getGroups());
+        groups.addAll(preferencesManager.getGroups());
         if (installationSourceAdapter != null) { installationSourceAdapter.notifyDataSetChanged(); }
         toggledApps.clear();
-        toggledApps.addAll(Arrays.asList(groups.get(myPreferencesManager.getIntPreference("groupToEdit", 0)).getInstallationSources().split(",")));
+        toggledApps.addAll(Arrays.asList(groups.get(AppGlobals.groupToEdit).getInstallationSources().split(",")));
     }
 
     private void saveGroups() {
-        groups.get(myPreferencesManager.getIntPreference("groupToEdit", 0)).setInstallationSources(String.join(",", toggledApps));
-        myPreferencesManager.saveGroups(groups);
+        groups.get(AppGlobals.groupToEdit).setInstallationSources(String.join(",", toggledApps));
+        preferencesManager.setGroups(groups);
     }
 
     @Override

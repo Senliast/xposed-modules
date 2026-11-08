@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -20,7 +21,6 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public class XposedMain implements IXposedHookLoadPackage {
     private static final String listenPackage = "android";
-
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if (!lpparam.packageName.equals(listenPackage)) return;
@@ -39,7 +39,8 @@ public class XposedMain implements IXposedHookLoadPackage {
                         Object session = param.thisObject;
                         String installerPackage = String.valueOf(XposedHelpers.getAdditionalInstanceField(session, "myMInstallerPackageName"));
                         String appAboutToUpdate = String.valueOf(getObjectField(param.thisObject, "mPackageName"));
-                        if (shouldBlockInstall(appAboutToUpdate, installerPackage)) {
+
+                        if (shouldBlockInstall(appAboutToUpdate, installerPackage, lpparam.classLoader)) {
                             param.args[1] = "";
                         }
                     }
@@ -86,70 +87,50 @@ public class XposedMain implements IXposedHookLoadPackage {
                     }
                 }
         );
-
-        /*
-        Hook for Android 11 and below. I dont have an Android 11 device, so i cannot test it myself.
-        And because the code is running in the system process, an error in it can potentially cause
-        a crash of Android, in worst a bootloop. Its very unlikely to happen, but in order to be on
-        the safe side, i will not turn it on for now. Its here for the future, when there is a
-        possibility to safely test it, so that i already have a possible solution.
-
-        XposedHelpers.findAndHookMethod(
-            "com.android.server.pm.PackageInstallerSession",
-            lpparam.classLoader,
-            "commit",
-            android.content.IntentSender.class,
-            new XC_MethodHook() {
-
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-
-                    Object session = param.thisObject;
-
-                    String installerPackageName = (String) XposedHelpers.getObjectField(session, "mInstallerPackageName");
-                    String sessionPackageName = (String) XposedHelpers.getObjectField(session, "mPackageName");
-
-                    XposedHelpers.callMethod(session, "onSessionVerificationFailure",
-                            android.content.pm.PackageInstaller.STATUS_FAILURE,
-                            "Installation blocked by Updates Manager Extended");
-
-                    param.setResult(null);
-                }
-            });
-         */
     }
 
-    public boolean shouldBlockInstall(String app, String source) {
-        XSharedPreferences globalPreferences = new XSharedPreferences("com.senliast.updatesmanagerextended", "Preferences");
-        List<String> appsToBlockUpdates = new ArrayList<>();
-        List<String> installationSourcesToBlock = new ArrayList<>();
-        List<GroupInfo> groups = new ArrayList<>();
+    public boolean shouldBlockInstall(String app, String source, ClassLoader classLoader) {
+        // Do not block installation after the app has been uninstalled.
+        if (isPackageInstalledForUser(app, 0, classLoader)) {
+            XSharedPreferences globalPreferences = new XSharedPreferences("com.senliast.updatesmanagerextended", "Preferences");
 
-        if (globalPreferences.getString("moduleStatus", "disabled").equals("enabled_immediately") || (globalPreferences.getString("moduleStatus", "disabled").equals("enabled_since") && System.currentTimeMillis() >= globalPreferences.getLong("moduleStatusTime", 0L))) {
-            groups = getGroups();
-            for (GroupInfo group : groups) {
-                if (group.getStatus().equals("enabled_immediately") || (group.getStatus().equals("enabled_since") && System.currentTimeMillis() >= group.getStatusTime())) {
-                    appsToBlockUpdates = Arrays.asList(group.getAppsToBlockUpdates().split(","));
-                    installationSourcesToBlock = Arrays.asList(group.getInstallationSources().split(","));
-                    if (appsToBlockUpdates.contains(app) && (installationSourcesToBlock.contains(source) || group.getBlockAllInstallationSources())) {
-                        return true;
+            if (globalPreferences.getString("moduleStatus", "disabled").equals("enabled_immediately")
+                    || (globalPreferences.getString("moduleStatus", "disabled").equals("enabled_since")
+                    && System.currentTimeMillis() >= globalPreferences.getLong("moduleStatusTime", 0L))) {
+                List<Group> groups = getGroups();
+                for (Group group : groups) {
+                    if (group.getStatus().equals("enabled_immediately")
+                            || (group.getStatus().equals("enabled_since")
+                            && System.currentTimeMillis() >= group.getStatusTime())) {
+                        Set<SavedApp> appsToBlockUpdates = group.getAppsToBlockUpdates();
+                        List<String> installationSourcesToBlock = Arrays.asList(group.getInstallationSources().split(","));
+
+                        if (installationSourcesToBlock.contains(source) || group.getBlockAllInstallationSources()) {
+                            for (SavedApp savedApp : appsToBlockUpdates) {
+                                if (savedApp.packageName.equals(app)
+                                        && (savedApp.status.equals("enabled_immediately")
+                                        || (savedApp.status.equals("enabled_since")
+                                        && (System.currentTimeMillis() >= savedApp.statusTime)))) {
+                                    return true;
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-
         return false;
     }
 
-    public List<GroupInfo> getGroups() {
+    public List<Group> getGroups() {
         Gson gson = new Gson();
-        List<GroupInfo> groups = new ArrayList<>();
-        XSharedPreferences groupsPreferences = new XSharedPreferences("com.senliast.updatesmanagerextended", "Groups");
-        String json = groupsPreferences.getString("groups_list", null);
+        List<Group> groups = new ArrayList<>();
+        XSharedPreferences groupsPreferences = new XSharedPreferences("com.senliast.updatesmanagerextended", "Preferences");
+        String json = groupsPreferences.getString("groups", null);
 
         if (json != null) {
-            Type type = new TypeToken<ArrayList<GroupInfo>>(){}.getType();
-            List<GroupInfo> loadedList = gson.fromJson(json, type);
+            Type type = new TypeToken<ArrayList<Group>>(){}.getType();
+            List<Group> loadedList = gson.fromJson(json, type);
 
             if (loadedList != null) {
                 groups.clear();
@@ -162,5 +143,47 @@ public class XposedMain implements IXposedHookLoadPackage {
         }
 
         return groups;
+    }
+
+    // PackageManager is not available because we dont have a context. But since we are in system_server -
+    // we can use reflection and check if an app is installed using Android internal methods.
+    public boolean isPackageInstalledForUser(String packageName, int userId, ClassLoader classLoader) {
+        try {
+            Class<?> appGlobalsClass = XposedHelpers.findClass(
+                    "android.app.AppGlobals",
+                    classLoader
+            );
+
+            Object packageManager = XposedHelpers.callStaticMethod(
+                    appGlobalsClass,
+                    "getPackageManager"
+            );
+
+            Object packageInfo;
+
+            if (android.os.Build.VERSION.SDK_INT >= 33) {
+                // Android 13–14
+                packageInfo = XposedHelpers.callMethod(
+                        packageManager,
+                        "getPackageInfo",
+                        packageName,
+                        0L,
+                        userId
+                );
+            } else {
+                // Android 12
+                packageInfo = XposedHelpers.callMethod(
+                        packageManager,
+                        "getPackageInfo",
+                        packageName,
+                        0,
+                        userId
+                );
+            }
+
+            return packageInfo != null;
+        } catch (Throwable t) {
+            return false;
+        }
     }
 }

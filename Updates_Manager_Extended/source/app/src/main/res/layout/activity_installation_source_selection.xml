@@ -42,8 +42,8 @@
                 android:layout_height="wrap_content">
 
                 <view
-                    android:id="@+id/mobvSwitchBlockAll"
-                    class="com.senliast.updatesmanagerextended.MyObjectBackgroundView"
+                    android:id="@+id/obvSwitchBlockAll"
+                    class="com.senliast.updatesmanagerextended.ObjectBackgroundView"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="20dp"
@@ -65,9 +65,9 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     android:text="@string/block_from_all"
-                    app:layout_constraintBottom_toBottomOf="@id/mobvSwitchBlockAll"
-                    app:layout_constraintStart_toStartOf="@id/mobvSwitchBlockAll"
-                    app:layout_constraintTop_toTopOf="@id/mobvSwitchBlockAll" />
+                    app:layout_constraintBottom_toBottomOf="@id/obvSwitchBlockAll"
+                    app:layout_constraintStart_toStartOf="@id/obvSwitchBlockAll"
+                    app:layout_constraintTop_toTopOf="@id/obvSwitchBlockAll" />
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switchBlockAll"
@@ -76,9 +76,9 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="@id/mobvSwitchBlockAll"
-                    app:layout_constraintEnd_toEndOf="@id/mobvSwitchBlockAll"
-                    app:layout_constraintTop_toTopOf="@id/mobvSwitchBlockAll" />
+                    app:layout_constraintBottom_toBottomOf="@id/obvSwitchBlockAll"
+                    app:layout_constraintEnd_toEndOf="@id/obvSwitchBlockAll"
+                    app:layout_constraintTop_toTopOf="@id/obvSwitchBlockAll" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

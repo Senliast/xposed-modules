@@ -45,4 +45,5 @@
     <string name="until_enabled_manually">До включения вручную</string>
     <string name="app_status_paused">"Модуль загружен но на паузе, остаётся: "</string>
     <string name="app_status_disabled_for_groups">Модуль выключен</string>
+    <string name="disable_app">Выключить приложение (разрешить обновления)</string>
 </resources>
