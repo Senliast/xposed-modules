@@ -23,7 +23,10 @@
             android:name=".GroupSelectionActivity"
             android:exported="false" />
         <activity
-            android:name=".AppSelectionActivity"
+            android:name=".AppSelectionActivity1"
+            android:exported="false" />
+        <activity
+            android:name=".AppSelectionActivity2"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

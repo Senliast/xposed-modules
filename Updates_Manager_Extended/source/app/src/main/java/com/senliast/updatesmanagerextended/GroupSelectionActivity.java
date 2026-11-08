@@ -36,10 +36,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 public class GroupSelectionActivity extends AppCompatActivity implements GroupActionListener, CountdownTimerHelper.OnTimerFinishListener {
-    private List<GroupInfo> groups = new ArrayList<>();
+    private List<Group> groups = new ArrayList<>();
     private GroupAdapter adapter;
     private RecyclerView recyclerView;
     private MaterialAlertDialogBuilder builder;
@@ -59,7 +60,7 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
     private Button buttonDialogRenameCancelButton;
     private EditText editTextGroupNameRename;
     private Toolbar toolbar;
-    private MyPreferencesManager myPreferencesManager = new MyPreferencesManager();
+    private PreferencesManager preferencesManager = new PreferencesManager();
     private View viewDialogDisable;
     private AlertDialog alertDialogDialogDisable;
     private Button buttonDialogDisablePermanentlyButton;
@@ -128,7 +129,10 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
                 .setPadding(0, 0,  0, 100)
                 .build();
 
-        groups.addAll(myPreferencesManager.getGroups());
+        if (preferencesManager.getGroups() != null) {
+            groups.addAll(preferencesManager.getGroups());
+        }
+
         if (adapter != null) { adapter.notifyDataSetChanged(); }
 
         adapter = new GroupAdapter(groups, this, this, this);
@@ -157,9 +161,9 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
             public void onClick(View v) {
                 alertDialogDialogAdd.dismiss();
                 String name = editTextGroupNameCreate.getText().toString();
-                groups.add(new GroupInfo(name, "", "", false, "enabled_immediately", 0L));
+                groups.add(new Group(name, "", new HashSet<>(), true, "enabled_immediately", 0L));
                 adapter.notifyItemInserted(groups.size() - 1);
-                myPreferencesManager.saveGroups(groups);
+                preferencesManager.setGroups(groups);
                 recyclerView.scrollToPosition(groups.size() - 1);
             }
         });
@@ -227,7 +231,7 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
 
                 Collections.swap(groups, fromPosition, toPosition);
                 adapter.notifyItemMoved(fromPosition, toPosition);
-                myPreferencesManager.saveGroups(groups);
+                preferencesManager.setGroups(groups);
                 return true;
             }
 
@@ -275,7 +279,7 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
     @Override
     public void onRename(int position) {
         if (position < 0 || position >= groups.size()) return;
-        GroupInfo group = groups.get(position);
+        Group group = groups.get(position);
 
         viewDialogRename = getLayoutInflater().inflate(R.layout.dialog_rename_group, null);
         builder = new MaterialAlertDialogBuilder(this);
@@ -290,7 +294,7 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
                 String newName = editTextGroupNameRename.getText().toString();
                 group.setName(newName);
                 adapter.notifyItemChanged(position);
-                myPreferencesManager.saveGroups(groups);
+                preferencesManager.setGroups(groups);
             }
         });
         buttonDialogRenameCancelButton.setOnClickListener(new View.OnClickListener() {
@@ -356,7 +360,7 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
                 alertDialogDialogRemove.dismiss();
                 groups.remove(position);
                 adapter.notifyItemRemoved(position);
-                myPreferencesManager.saveGroups(groups);
+                preferencesManager.setGroups(groups);
             }
         });
         buttonDialogRemoveCancelButton.setOnClickListener(new View.OnClickListener() {
@@ -374,15 +378,15 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
 
     @Override
     public void onButtonSelectInstallationSourceClicked(int position) {
-        myPreferencesManager.setIntPreference("groupToEdit", position);
+        AppGlobals.groupToEdit = position;
         Intent intent = new Intent(GroupSelectionActivity.this, InstallationSourceSelectionActivity.class);
         startActivity(intent);
     }
 
     @Override
     public void onButtonSelectBlacklistedAppsClicked(int position) {
-        myPreferencesManager.setIntPreference("groupToEdit", position);
-        Intent intent = new Intent(GroupSelectionActivity.this, AppSelectionActivity.class);
+        AppGlobals.groupToEdit = position;
+        Intent intent = new Intent(GroupSelectionActivity.this, AppSelectionActivity1.class);
         startActivity(intent);
     }
 
@@ -397,17 +401,19 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
         // at all cost. Therefore, the list will be cleared and filled again. Because, for the inventor of
         // adapter, it was of course not possible to make adapter refresh the reference automatically...
         groups.clear();
-        groups.addAll(myPreferencesManager.getGroups());
+        if (preferencesManager.getGroups() != null) {
+            groups.addAll(preferencesManager.getGroups());
+        }
         adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onSwitchToggled(int position, boolean desiredState, GroupInfo group) {
+    public void onSwitchToggled(int position, boolean desiredState, Group group) {
         // We will update the preferences and tell the adapter to reload them.
         if (desiredState) {
-            group.setStatus("enabled_immediately");
+            group.setStatus(Status.ENABLED_IMMEDIATELY);
             group.setStatusTime(0L);
-            myPreferencesManager.saveGroups(groups);
+            preferencesManager.setGroups(groups);
             adapter.notifyItemChanged(position);
         } else {
             dialogDisableAnyOptionSelected = false;
@@ -424,9 +430,9 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
             buttonDialogDisablePermanentlyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    group.setStatus("disabled");
+                    group.setStatus(Status.DISABLED);
                     group.setStatusTime(0L);
-                    myPreferencesManager.saveGroups(groups);
+                    preferencesManager.setGroups(groups);
                     dialogDisableAnyOptionSelected = true;
                     alertDialogDialogDisable.dismiss();
                     adapter.notifyDataSetChanged();
@@ -435,9 +441,9 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
             buttonDialogDisable15Min.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    group.setStatus("enabled_since");
+                    group.setStatus(Status.ENABLED_SINCE);
                     group.setStatusTime(System.currentTimeMillis() + (15 * 60 * 1000));
-                    myPreferencesManager.saveGroups(groups);
+                    preferencesManager.setGroups(groups);
                     dialogDisableAnyOptionSelected = true;
                     alertDialogDialogDisable.dismiss();
                     adapter.notifyDataSetChanged();
@@ -446,9 +452,9 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
             buttonDialogDisable30Min.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    group.setStatus("enabled_since");
+                    group.setStatus(Status.ENABLED_SINCE);
                     group.setStatusTime(System.currentTimeMillis() + (30 * 60 * 1000));
-                    myPreferencesManager.saveGroups(groups);
+                    preferencesManager.setGroups(groups);
                     dialogDisableAnyOptionSelected = true;
                     alertDialogDialogDisable.dismiss();
                     adapter.notifyDataSetChanged();
@@ -457,9 +463,9 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
             buttonDialogDisable45Min.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    group.setStatus("enabled_since");
+                    group.setStatus(Status.ENABLED_SINCE);
                     group.setStatusTime(System.currentTimeMillis() + (45 * 60 * 1000));
-                    myPreferencesManager.saveGroups(groups);
+                    preferencesManager.setGroups(groups);
                     dialogDisableAnyOptionSelected = true;
                     alertDialogDialogDisable.dismiss();
                     adapter.notifyDataSetChanged();
@@ -468,9 +474,9 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
             buttonDialogDisable60Min.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    group.setStatus("enabled_since");
+                    group.setStatus(Status.ENABLED_SINCE);
                     group.setStatusTime(System.currentTimeMillis() + (60 * 60 * 1000));
-                    myPreferencesManager.saveGroups(groups);
+                    preferencesManager.setGroups(groups);
                     dialogDisableAnyOptionSelected = true;
                     alertDialogDialogDisable.dismiss();
                     adapter.notifyDataSetChanged();
@@ -508,7 +514,7 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
 
     @Override
     public void onTimerFinished(int position) {
-        groups.get(position).setStatus("enabled_immediately");
+        groups.get(position).setStatus(Status.ENABLED_IMMEDIATELY);
         groups.get(position).setStatusTime(0L);
         adapter.notifyItemChanged(position);
     }
@@ -537,5 +543,5 @@ interface GroupActionListener {
     void onDelete(int position);
     void onButtonSelectInstallationSourceClicked(int position);
     void onButtonSelectBlacklistedAppsClicked(int position);
-    void onSwitchToggled(int position, boolean desiredState, GroupInfo group);
+    void onSwitchToggled(int position, boolean desiredState, Group group);
 }

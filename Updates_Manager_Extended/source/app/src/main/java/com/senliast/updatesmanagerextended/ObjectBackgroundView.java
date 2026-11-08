@@ -7,21 +7,21 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class MyObjectBackgroundView extends View {
+public class ObjectBackgroundView extends View {
     private Paint paint;
     private float cornerRadius;
 
-    public MyObjectBackgroundView(Context context) {
+    public ObjectBackgroundView(Context context) {
         super(context);
         init(context);
     }
 
-    public MyObjectBackgroundView(Context context, AttributeSet attrs) {
+    public ObjectBackgroundView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public MyObjectBackgroundView(Context context, AttributeSet attrs, int defStyle) {
+    public ObjectBackgroundView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }

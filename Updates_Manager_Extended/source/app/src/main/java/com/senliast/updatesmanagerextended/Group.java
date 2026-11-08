@@ -1,17 +1,16 @@
 package com.senliast.updatesmanagerextended;
 
-public class GroupInfo {
+import java.util.Set;
+
+public class Group {
     private String name;
     private String status;
     private String installationSources;
-    private String appsToBlockUpdates;
+    private Set<SavedApp> appsToBlockUpdates;
     private boolean blockAllInstallationSources;
     private Long statusTime;
 
-    public GroupInfo() {
-    }
-
-    public GroupInfo(String name, String installationSources, String appsToBlockUpdates, boolean blockAllInstallationSources, String status, Long statusTime) {
+    public Group(String name, String installationSources, Set<SavedApp> appsToBlockUpdates, boolean blockAllInstallationSources, String status, Long statusTime) {
         this.name = name;
         this.status = status;
         this.installationSources = installationSources;
@@ -44,9 +43,15 @@ public class GroupInfo {
 
     public String getInstallationSources() { return installationSources;}
 
-    public void setAppsToBlockUpdates(String appsToBlockUpdates) { this.appsToBlockUpdates = appsToBlockUpdates; }
+    public void setAppsToBlockUpdates(Set<SavedApp> appsToBlockUpdates) { this.appsToBlockUpdates = appsToBlockUpdates; }
 
-    public String getAppsToBlockUpdates() { return appsToBlockUpdates; }
+    public Set<SavedApp> getAppsToBlockUpdates() {
+        if (appsToBlockUpdates != null) {
+            return appsToBlockUpdates;
+        } else {
+            return null;
+        }
+    }
 
     public void setBlockAllInstallationSources(boolean blockAllInstallationSources) { this.blockAllInstallationSources = blockAllInstallationSources; }
 
