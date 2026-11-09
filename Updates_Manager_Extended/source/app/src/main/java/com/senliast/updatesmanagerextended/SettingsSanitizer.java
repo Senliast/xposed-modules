@@ -18,21 +18,22 @@ public class SettingsSanitizer {
 
     public synchronized void sanitize() {
         if (preferencesManager.testPreferences()) {
-            if (preferencesManager.getBooleanPreference("preferencesCreated", false) && preferencesManager.getGroups() != null)
-            groups = preferencesManager.getGroups();
-            for (Group group : groups) {
-                installationSources = new HashSet<>();
-                installationSources.addAll(Arrays.asList(group.getInstallationSources().split(",")));
-                Iterator<String> iteratorInstallationSources = installationSources.iterator();
-                while (iteratorInstallationSources.hasNext()) {
-                    String item = iteratorInstallationSources.next();
-                    if (!isPackageInstalled(item.toString(), MyApplication.getAppContext().getPackageManager())) {
-                        iteratorInstallationSources.remove();
+            if (preferencesManager.getBooleanPreference("preferencesCreated", false) && preferencesManager.getGroups() != null) {
+                groups = preferencesManager.getGroups();
+                for (Group group : groups) {
+                    installationSources = new HashSet<>();
+                    installationSources.addAll(Arrays.asList(group.getInstallationSources().split(",")));
+                    Iterator<String> iteratorInstallationSources = installationSources.iterator();
+                    while (iteratorInstallationSources.hasNext()) {
+                        String item = iteratorInstallationSources.next();
+                        if (!isPackageInstalled(item.toString(), MyApplication.getAppContext().getPackageManager())) {
+                            iteratorInstallationSources.remove();
+                        }
                     }
+                    group.setInstallationSources(String.join(",", installationSources));
                 }
-                group.setInstallationSources(String.join(",", installationSources));
+                preferencesManager.setGroups(groups);
             }
-            preferencesManager.setGroups(groups);
         }
     }
 

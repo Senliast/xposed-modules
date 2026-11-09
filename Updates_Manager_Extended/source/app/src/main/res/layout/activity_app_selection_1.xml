@@ -29,20 +29,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 app:iconifiedByDefault="false"
-                app:queryHint="@string/filter_apps">
-
-            </androidx.appcompat.widget.SearchView>
-
+                app:queryHint="@string/filter_apps"></androidx.appcompat.widget.SearchView>
         </androidx.appcompat.widget.Toolbar>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
+        android:id="@+id/fabEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="20dp"
-        app:srcCompat="@drawable/ic_pencil" />
+        android:layout_margin="30dp"
+        android:scaleX="1.2"
+        android:scaleY="1.2"
+        app:srcCompat="@drawable/ic_pencil"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.FloatingActionButton"
+        app:backgroundTint="?attr/colorPrimaryContainer"
+        app:tint="?attr/colorOnPrimaryContainer"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

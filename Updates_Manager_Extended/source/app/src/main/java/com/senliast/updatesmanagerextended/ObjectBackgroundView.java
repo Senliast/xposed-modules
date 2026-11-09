@@ -30,7 +30,7 @@ public class ObjectBackgroundView extends View {
         paint = new Paint();
         paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.FILL);
-        cornerRadius = Utils.convertDpToFloat(context,20);
+        cornerRadius = Utils.convertIntDpToFloat(context,20);
     }
 
     @Override

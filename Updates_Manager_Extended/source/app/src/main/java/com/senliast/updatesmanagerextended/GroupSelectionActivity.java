@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -72,6 +73,7 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
     private TextView textViewDialogDisableTitle;
     private boolean dialogDisableAnyOptionSelected = false;
     private View viewScrollbarProtector;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,10 +125,13 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
         recyclerView.setHasFixedSize(true);
         recyclerView.setVerticalScrollBarEnabled(true);
 
+        fab = findViewById(R.id.fabAdd);
+        fab.setOnClickListener(v -> showAddDialog());
+
         FastScroller fastScroller = new FastScrollerBuilder(recyclerView)
                 .setThumbDrawable(getDrawable(R.drawable.fastscroll_thumb))
                 .setTrackDrawable(getDrawable(R.drawable.fastscroll_track))
-                .setPadding(0, 0,  0, 100)
+                .setPadding(0, 0,  0, 0)
                 .build();
 
         if (preferencesManager.getGroups() != null) {
@@ -137,16 +142,18 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
 
         adapter = new GroupAdapter(groups, this, this, this);
         recyclerView.setAdapter(adapter);
-        recyclerView.setPadding(0, 0, 0, Utils.converDpToPx(this, 100));
+        recyclerView.setPadding(0, 0, 0, 0);
         recyclerView.setClipToPadding(false);
-
-        FloatingActionButton fab = findViewById(R.id.fabAdd);
-        fab.setOnClickListener(v -> showAddDialog());
 
         enableDragAndDrop();
 
         viewScrollbarProtector = findViewById(R.id.viewScrollbarProtector);
         adapter.notifyDataSetChanged();
+
+        fab.post(() -> {
+            CoordinatorLayout.LayoutParams fabLayoutParams = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+            recyclerView.setPadding(0, 0, 0, (fab.getHeight() + fabLayoutParams.topMargin + fabLayoutParams.bottomMargin));
+        });
     }
 
     public void showAddDialog() {
@@ -161,7 +168,7 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
             public void onClick(View v) {
                 alertDialogDialogAdd.dismiss();
                 String name = editTextGroupNameCreate.getText().toString();
-                groups.add(new Group(name, "", new HashSet<>(), true, "enabled_immediately", 0L));
+                groups.add(new Group(name, "", new HashSet<>(), true, Status.ENABLED_IMMEDIATELY, 0L));
                 adapter.notifyItemInserted(groups.size() - 1);
                 preferencesManager.setGroups(groups);
                 recyclerView.scrollToPosition(groups.size() - 1);
