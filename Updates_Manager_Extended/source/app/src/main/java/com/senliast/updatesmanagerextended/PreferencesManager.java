@@ -61,7 +61,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class PreferencesManager {
-    private final int APP_VERSION_CODE = 12;
+    private final int APP_VERSION_CODE = 13;
     private Context context = MyApplication.getAppContext();
 
     public SharedPreferences getSharedPreferences() {
@@ -544,9 +544,9 @@ public class PreferencesManager {
         }
         // ========================================
 
-        // UME 5.0 (version code 12)
+        // UME 5.0 - 5.1 (version code 12 - 13)
         // ========================================
-        if (preferencesCodeVersion == 12) {
+        if (preferencesCodeVersion == 12 || preferencesCodeVersion == 13) {
             try {
                 File iconsDir = new File(context.getFilesDir(), "Icons");
 
@@ -728,6 +728,11 @@ public class PreferencesManager {
                 deletePreference("groups_list");
                 deletePreference("groupToEdit");
                 context.deleteSharedPreferences("Groups");
+                setIntPreference("APP_VERSION_CODE", APP_VERSION_CODE);
+            }
+
+            // From version code 12 (UME 5.0)
+            if (getIntPreference("APP_VERSION_CODE", 0) == 12) {
                 setIntPreference("APP_VERSION_CODE", APP_VERSION_CODE);
             }
         }

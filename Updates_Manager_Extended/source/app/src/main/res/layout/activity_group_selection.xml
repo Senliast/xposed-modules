@@ -24,14 +24,18 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="20dp"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:layout_margin="30dp"
+        android:scaleX="1.2"
+        android:scaleY="1.2"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.FloatingActionButton"
+        app:backgroundTint="?attr/colorPrimaryContainer"
+        app:tint="?attr/colorOnPrimaryContainer"/>
 
     <View
         android:id="@+id/viewScrollbarProtector"
@@ -39,5 +43,4 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:visibility="gone" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

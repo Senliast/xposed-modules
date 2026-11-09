@@ -11,7 +11,7 @@ import android.util.TypedValue;
 import com.senliast.MyApplication;
 
 public class Utils {
-    public static float convertDpToFloat(Context context, int dpValue) {
+    public static float convertIntDpToFloat(Context context, int dpValue) {
         float floatValue = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
         return floatValue;
     }
@@ -24,11 +24,6 @@ public class Utils {
         } else  {
             return false;
         }
-    }
-
-    public static int converDpToPx(Context context, int dp) {
-        int px = (int) (dp * context.getResources().getSystem().getDisplayMetrics().density);
-        return px;
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {

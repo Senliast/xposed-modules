@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -54,7 +55,7 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
     private AlertDialog alertDialogDialogLoading;
     private Toolbar toolbar;
     private List<Group> groups = new ArrayList<>();
-    private FloatingActionButton fabAdd;
+    private FloatingActionButton fabEdit;
     private ColorMatrix matrix = new ColorMatrix();
     private View viewDialogDisable;
     private AlertDialog alertDialogDialogDisable;
@@ -84,6 +85,7 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
 
             return insets;
         });
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.appBarLayout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 
@@ -96,6 +98,7 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
 
             return insets;
         });
+
         DynamicColors.applyToActivityIfAvailable(this);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
@@ -113,10 +116,12 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setVerticalScrollBarEnabled(true);
-        fabAdd = findViewById(R.id.fabAdd);
+        fabEdit = findViewById(R.id.fabEdit);
+
         FastScroller fastScroller = new FastScrollerBuilder(recyclerView)
             .setThumbDrawable(getDrawable(R.drawable.fastscroll_thumb))
             .setTrackDrawable(getDrawable(R.drawable.fastscroll_track))
+            .setPadding(0, 0, 0, 0)
             .build();
         viewDialogLoading = getLayoutInflater().inflate(R.layout.dialog_loading, null);
         builder = new MaterialAlertDialogBuilder(this);
@@ -142,6 +147,8 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
 
         }, this);
         recyclerView.setAdapter(appAdapter1);
+        recyclerView.setPadding(0, 0, 0, 0);
+        recyclerView.setClipToPadding(false);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,12 +157,18 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
             }
         });
 
-        fabAdd.setOnClickListener(new View.OnClickListener() {
+        fabEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AppSelectionActivity1.this, AppSelectionActivity2.class);
                 startActivity(intent);
             }
+        });
+
+        fabEdit.post(() -> {
+            CoordinatorLayout.LayoutParams fabLayoutParams = (CoordinatorLayout.LayoutParams) fabEdit.getLayoutParams();
+            recyclerView.setPadding(0, 0, 0, (fabEdit.getHeight() + fabLayoutParams.topMargin + fabLayoutParams.bottomMargin));
+            recyclerView.setClipToPadding(false);
         });
     }
 

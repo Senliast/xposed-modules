@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private View viewDialogWelcome;
     private AlertDialog alertDialogDialogWelcome;
     private Button buttonDialogWelcomeOkButton;
-    private final Integer APP_VERSION_CODE = 12;
+    private final Integer APP_VERSION_CODE = 13;
     private boolean switchModuleEnabledSwitchedListenerEnabled = true;
     private AlertDialog alertDialogDialogDisable;
     private View viewDialogDisable;
