@@ -20,10 +20,10 @@ android {
 
     defaultConfig {
         applicationId "com.senliast.updatesmanagerextended"
-        minSdk 31
+        minSdk 26
         targetSdk 34
-        versionCode 13
-        versionName '5.1'
+        versionCode 14
+        versionName '6.0'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

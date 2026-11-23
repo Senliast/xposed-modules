@@ -1,5 +1,7 @@
 package com.senliast.updatesmanagerextended;
 
+import android.os.Build;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -12,77 +14,228 @@ import java.util.Set;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import static de.robv.android.xposed.XposedHelpers.findClass;
-import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public class XposedMain implements IXposedHookLoadPackage {
     private static final String listenPackage = "android";
+    private Class<?> packageManagerExceptionClass;
+    private static final int INSTALL_FAILED_INVALID_APK = -2;
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if (!lpparam.packageName.equals(listenPackage)) return;
 
-        Class<?> PackageInstallerSessionClass = findClass("com.android.server.pm.PackageInstallerSession", lpparam.classLoader);
+        Class<?> PackageInstallerSessionClass = findClass(
+                "com.android.server.pm.PackageInstallerSession",
+                lpparam.classLoader);
+
+        if (packageManagerExceptionClass == null) {
+            try {
+                packageManagerExceptionClass = XposedHelpers.findClass(
+                        "com.android.server.pm.PackageManagerException",
+                        lpparam.classLoader
+                );
+            } catch (Throwable t) {
+                return;
+            }
+        }
+
+        // Android 8.0
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
+            hookAndroid8Dot0(PackageInstallerSessionClass, lpparam.classLoader);
+        }
+
+        // Android 8.1 - 10
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            hookAndroid8Dot1to10(PackageInstallerSessionClass, lpparam.classLoader);
+        }
+
+        // Android 11 and up
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            hookAndroid11AndUp(PackageInstallerSessionClass, lpparam.classLoader);
+        }
+    }
+
+    private Throwable newBlockedInstallException() {
+        if (packageManagerExceptionClass == null) { return null; }
+
+        try {
+            return (Throwable) XposedHelpers.newInstance(
+                    packageManagerExceptionClass,
+                    INSTALL_FAILED_INVALID_APK,
+                    "Installation blocked by Updates Manager Extended"
+            );
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    private Class<?> findApkLiteClass(ClassLoader cl) {
+        try {
+            return XposedHelpers.findClass("android.content.pm.parsing.ApkLite", cl);
+        } catch (Throwable ignored) {
+
+        }
+
+        try {
+            return XposedHelpers.findClass("android.content.pm.PackageParser$ApkLite", cl);
+        } catch (Throwable ignored) {
+
+        }
+
+        return null;
+    }
+
+    private void hookAndroid8Dot0(Class<?> sessionClass, ClassLoader cl) {
+        Class<?> apkLiteClass = findApkLiteClass(cl);
+
+        if (apkLiteClass == null) { return; }
 
         XposedHelpers.findAndHookMethod(
-                PackageInstallerSessionClass,
-                "assertPackageConsistentLocked",
+                sessionClass,
+                "assertApkConsistent",
                 String.class,
-                String.class,
-                long.class,
+                apkLiteClass,
                 new XC_MethodHook() {
                     @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    protected void beforeHookedMethod(MethodHookParam param) {
                         Object session = param.thisObject;
-                        String installerPackage = String.valueOf(XposedHelpers.getAdditionalInstanceField(session, "myMInstallerPackageName"));
-                        String appAboutToUpdate = String.valueOf(getObjectField(param.thisObject, "mPackageName"));
+                        Object apk = param.args[1];
 
-                        if (shouldBlockInstall(appAboutToUpdate, installerPackage, lpparam.classLoader)) {
-                            param.args[1] = "";
+                        String packageName = null;
+                        try {
+                            packageName = (String) XposedHelpers.getObjectField(apk, "packageName");
+                        } catch (Throwable ignored) {
+
+                        }
+
+                        String installerPackageName = null;
+                        try {
+                            installerPackageName = (String) XposedHelpers.getObjectField(
+                                    session,
+                                    "mInstallerPackageName");
+                        } catch (Throwable ignored) {
+
+                        }
+
+                        if (shouldBlockInstall(packageName, installerPackageName, cl)) {
+                            Throwable pme = newBlockedInstallException();
+                            if (pme != null) {
+                                param.setThrowable(pme);
+                            }
                         }
                     }
                 }
         );
+    }
 
-        // The needed field has to be extracted via constructor. Since PackageInstaller can have multiple sessions,
-        // its important that the value will be passed to another hook via "setAdditionalInstanceField()", and
-        // not via a variable, so that no overlapping / wrong values will be passed.
-        XposedBridge.hookAllConstructors(
-                PackageInstallerSessionClass,
+    private void hookAndroid8Dot1to10(Class<?> sessionClass, ClassLoader cl) {
+        Class<?> apkLiteClass = findApkLiteClass(cl);
+
+        if (apkLiteClass == null) { return; }
+
+        XposedHelpers.findAndHookMethod(
+                sessionClass,
+                "assertApkConsistentLocked",
+                String.class,
+                apkLiteClass,
                 new XC_MethodHook() {
                     @Override
-                    protected void afterHookedMethod(MethodHookParam param) {
-                        // There are 2 properties of the install source in PackageManager - "mInstallerPackageName" and "mInitiatingPackageName".
-                        // The difference between them is that the first one says who is installing an app, and the second one - which app did
-                        // initiated the install.
-                        //
-                        // If the installation happened by a privileged app (Google Play or other app store from manufacturer or via the
-                        // permission "android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" since Android 12) - this app will be displayed
-                        // as "mInstallerPackageName" and "mInitiatingPackageName". But if the installation happened via an APK
-                        // (i.e. the calling ap has only the normal "android.permission.REQUEST_INSTALL_PACKAGES" permission) - then the
-                        // Package installer will be displayed both as "mInstallerPackageName" and "mInitiatingPackageName". In this case,
-                        // Android doesnt forward the original installation initiator app.
-                        //
-                        // Its probably still possible to find it out, but apps with the regular APK installation permissions cannot update apps
-                        // automatically, and this module is intended mainly for disabling automatic updates. If its needed - its still possible
-                        // to block the updates of this app via APK by blocking updates by Package installer. So we will take the
-                        // "mInstallerPackageName" variable.
-
+                    protected void beforeHookedMethod(MethodHookParam param) {
                         Object session = param.thisObject;
-                        Object installSource = getObjectField(session, "mInstallSource");
+                        Object apk = param.args[1];
 
-                        if (installSource != null) {
-                            String installerPackage = (String)
-                                    getObjectField(installSource, "mInstallerPackageName");
+                        String packageName = null;
+                        try {
+                            packageName = (String) XposedHelpers.getObjectField(
+                                    apk,
+                                    "packageName");
+                        } catch (Throwable ignored) {
+                            try {
+                                packageName = (String) XposedHelpers.callMethod(
+                                        apk,
+                                        "getPackageName");
+                            } catch (Throwable ignored2) {
 
-                            XposedHelpers.setAdditionalInstanceField(
+                            }
+                        }
+
+                        String installerPackageName = null;
+                        try {
+                            installerPackageName = (String) XposedHelpers.getObjectField(
                                     session,
-                                    "myMInstallerPackageName",
-                                    installerPackage
-                            );
+                                    "mInstallerPackageName");
+                        } catch (Throwable ignored) {
+
+                        }
+
+                        if (shouldBlockInstall(packageName, installerPackageName, cl)) {
+                            Throwable pme = newBlockedInstallException();
+                            if (pme != null) {
+                                param.setThrowable(pme);
+                            }
+                        }
+                    }
+                }
+        );
+    }
+
+    private void hookAndroid11AndUp(Class<?> sessionClass, ClassLoader cl) {
+        Class<?> apkLiteClass = findApkLiteClass(cl);
+
+        if (apkLiteClass == null) { return; }
+
+        XposedHelpers.findAndHookMethod(
+                sessionClass,
+                "assertApkConsistentLocked",
+                String.class,
+                apkLiteClass,
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) {
+                        Object session = param.thisObject;
+                        Object apk = param.args[1];
+
+                        String packageName = null;
+                        try {
+                            packageName = (String) XposedHelpers.callMethod(
+                                    apk,
+                                    "getPackageName");
+                        } catch (Throwable ignored) {
+                            try {
+                                packageName = (String) XposedHelpers.getObjectField(
+                                        apk,
+                                        "packageName");
+                            } catch (Throwable ignored2) {
+
+                            }
+                        }
+
+                        String installerPackageName = null;
+                        try {
+                            Object installSource = XposedHelpers.getObjectField(session, "mInstallSource");
+                            if (installSource != null) {
+                                try {
+                                    installerPackageName = (String) XposedHelpers.getObjectField(
+                                            installSource,
+                                            "mInstallerPackageName");
+                                } catch (Throwable ignored) {
+                                    installerPackageName = (String) XposedHelpers.getObjectField(
+                                            installSource,
+                                            "installerPackageName");
+                                }
+                            }
+                        } catch (Throwable ignored) {
+
+                        }
+
+                        if (shouldBlockInstall(packageName, installerPackageName, cl)) {
+                            Throwable pme = newBlockedInstallException();
+                            if (pme != null) {
+                                param.setThrowable(pme);
+                            }
                         }
                     }
                 }
@@ -162,7 +315,7 @@ public class XposedMain implements IXposedHookLoadPackage {
             Object packageInfo;
 
             if (android.os.Build.VERSION.SDK_INT >= 33) {
-                // Android 13–14
+                // Android 13 and up
                 packageInfo = XposedHelpers.callMethod(
                         packageManager,
                         "getPackageInfo",
@@ -171,7 +324,7 @@ public class XposedMain implements IXposedHookLoadPackage {
                         userId
                 );
             } else {
-                // Android 12
+                // Android 12 and below
                 packageInfo = XposedHelpers.callMethod(
                         packageManager,
                         "getPackageInfo",

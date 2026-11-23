@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.senliast.MyApplication;
+import com.senliast.UmeApplication;
 
 import me.zhanghai.android.fastscroll.FastScroller;
 import me.zhanghai.android.fastscroll.FastScrollerBuilder;
@@ -71,6 +71,7 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DynamicColors.applyToActivityIfAvailable(this);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_app_selection_1);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activityAppSelection1), (v, insets) -> {
@@ -98,8 +99,6 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
 
             return insets;
         });
-
-        DynamicColors.applyToActivityIfAvailable(this);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
         WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
@@ -117,12 +116,11 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
         recyclerView.setHasFixedSize(true);
         recyclerView.setVerticalScrollBarEnabled(true);
         fabEdit = findViewById(R.id.fabEdit);
-
         FastScroller fastScroller = new FastScrollerBuilder(recyclerView)
-            .setThumbDrawable(getDrawable(R.drawable.fastscroll_thumb))
-            .setTrackDrawable(getDrawable(R.drawable.fastscroll_track))
-            .setPadding(0, 0, 0, 0)
-            .build();
+                .setThumbDrawable(getDrawable(R.drawable.fastscroll_thumb))
+                .setTrackDrawable(getDrawable(R.drawable.fastscroll_track))
+                .setPadding(0, 0, 0, 0)
+                .build();
         viewDialogLoading = getLayoutInflater().inflate(R.layout.dialog_loading, null);
         builder = new MaterialAlertDialogBuilder(this);
         alertDialogDialogLoading = builder.create();
@@ -131,13 +129,10 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
         searchView = findViewById(R.id.searchView);
         setupSearchView();
         matrix.setSaturation(0f);
-
         appList = new ArrayList<>();
         finalAppList = new ArrayList<>();
         savedApps = new HashSet<>();
-
         groups = preferencesManager.getGroups();
-
         appAdapter1 = new AppAdapter1(groups, AppGlobals.groupToEdit, finalAppList, savedApps, new AppAdapter1.OnToggleListener() {
             @Override
             public void onToggle(int position, boolean desiredState, String packageName) {
@@ -147,7 +142,7 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
 
         }, this);
         recyclerView.setAdapter(appAdapter1);
-        recyclerView.setPadding(0, 0, 0, 0);
+        // recyclerView.setPadding(0, 0, 0, 0);
         recyclerView.setClipToPadding(false);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -232,7 +227,7 @@ public class AppSelectionActivity1 extends AppCompatActivity implements AppCount
                     Drawable icon = pm.getApplicationIcon(item.packageName);
                     appList.add(new AppInfo1(item.appName, item.packageName, icon, item.status, item.statusTime));
                 } catch (Exception e){
-                    Drawable icon = preferencesManager.getSavedAppIcon(MyApplication.getAppContext(), item.packageName);
+                    Drawable icon = preferencesManager.getSavedAppIcon(UmeApplication.getAppContext(), item.packageName);
                     icon.setColorFilter(new ColorMatrixColorFilter(matrix));
                     appList.add(new AppInfo1(item.appName, item.packageName, icon, item.status, item.statusTime));
                 }

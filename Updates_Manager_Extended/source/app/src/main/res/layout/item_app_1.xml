@@ -12,8 +12,7 @@
     app:cardBackgroundColor="?attr/colorSurfaceContainer"
     app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
-    app:strokeWidth="0dp"
-    app:rippleColor="?attr/colorPrimary">
+    app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -96,7 +95,5 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </com.google.android.material.card.MaterialCardView>

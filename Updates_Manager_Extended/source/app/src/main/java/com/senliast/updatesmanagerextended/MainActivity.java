@@ -20,7 +20,7 @@ import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
-import com.senliast.MyApplication;
+import com.senliast.UmeApplication;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private View viewDialogWelcome;
     private AlertDialog alertDialogDialogWelcome;
     private Button buttonDialogWelcomeOkButton;
-    private final Integer APP_VERSION_CODE = 13;
+    private final Integer APP_VERSION_CODE = 14;
     private boolean switchModuleEnabledSwitchedListenerEnabled = true;
     private AlertDialog alertDialogDialogDisable;
     private View viewDialogDisable;
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private CountdownTimerHelper timerHelper;
     private boolean dialogDisableAnyOptionSelected = false;
     private final IntentFilter mFilter = new IntentFilter("com.senliast.updatesmanagerextended.BROADCAST");
-    Context contextTheme = new ContextThemeWrapper(MyApplication.getAppContext(), R.style.Theme_MyApp);
+    Context contextTheme = new ContextThemeWrapper(UmeApplication.getAppContext(), R.style.Theme_MyApp);
     private final int GREEN = getSemanticColor(contextTheme, Color.rgb(76, 175, 80));
     private final int YELLOW = getSemanticColor(contextTheme, Color.rgb(255, 193, 7));
     private final int RED = getSemanticColor(contextTheme, Color.rgb(244, 67, 54));
@@ -85,16 +85,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DynamicColors.applyToActivityIfAvailable(this);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activityMain), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        DynamicColors.applyToActivityIfAvailable(this);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
 
@@ -197,6 +196,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cardEnableModule.setOnClickListener(v -> {
+            switchModuleEnabled.setChecked(!switchModuleEnabled.isChecked());
+        });
+
         cardSelectGroups.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, GroupSelectionActivity.class);
             startActivity(intent);
@@ -229,16 +232,14 @@ public class MainActivity extends AppCompatActivity {
         if (preferencesManager.testPreferences()) {
             createPreferences();
 
-            String status = preferencesManager.getModuleStatus();
-            long statusTime = preferencesManager.getModuleStatusTime();
-
-            if (status.equals(Status.ENABLED_IMMEDIATELY)
-                    || (status.equals(Status.ENABLED_SINCE) && System.currentTimeMillis() >= statusTime)) {
+            if (preferencesManager.getModuleStatus().equals(Status.ENABLED_IMMEDIATELY)
+                    || (preferencesManager.getModuleStatus().equals(Status.ENABLED_SINCE)
+                        && System.currentTimeMillis() >= preferencesManager.getModuleStatusTime())) {
                 setStatus(R.string.app_status_loaded_enabled, GREEN, R.drawable.green_check_icon);
                 switchModuleEnabled.setChecked(true);
                 timerHelper.stop();
                 settingsSanitizer.sanitize();
-            } else if (status.equals(Status.ENABLED_SINCE) && System.currentTimeMillis() < statusTime) {
+            } else if (preferencesManager.getModuleStatus().equals(Status.ENABLED_SINCE) && System.currentTimeMillis() < preferencesManager.getModuleStatusTime()) {
                 setStatus(R.string.app_status_paused, YELLOW, R.drawable.yellow_exclamation_mark_icon);
                 switchModuleEnabled.setChecked(false);
                 bindTimer();
@@ -278,14 +279,18 @@ public class MainActivity extends AppCompatActivity {
         textStatus.setTextColor(Color.WHITE);
     }
 
-    private void setControlsEnabled(boolean enabled) {
-        switchModuleEnabled.setEnabled(enabled);
-        cardEnableModule.setEnabled(enabled);
-        cardSelectGroups.setEnabled(enabled);
-        cardImport.setEnabled(enabled);
-        cardExport.setEnabled(enabled);
+    private void setControlsEnabled(boolean isEnabled) {
+        switchModuleEnabled.setEnabled(isEnabled);
+        cardEnableModule.setEnabled(isEnabled);
+        cardEnableModule.setClickable(isEnabled);
+        cardSelectGroups.setEnabled(isEnabled);
+        cardSelectGroups.setClickable(isEnabled);
+        cardImport.setEnabled(isEnabled);
+        cardImport.setClickable(isEnabled);
+        cardExport.setEnabled(isEnabled);
+        cardExport.setClickable(isEnabled);
 
-        float alpha = enabled ? 1.0f : 0.5f;
+        float alpha = isEnabled ? 1.0f : 0.5f;
         cardEnableModule.setAlpha(alpha);
         cardSelectGroups.setAlpha(alpha);
         cardImport.setAlpha(alpha);
@@ -309,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
         long endTime = preferencesManager.getModuleStatusTime();
 
         timerHelper.startCountdown(endTime,
-                timeLeft -> textStatus.setText(MyApplication.getAppContext().getString(R.string.app_status_paused) + timeLeft),
+                timeLeft -> textStatus.setText(UmeApplication.getAppContext().getString(R.string.app_status_paused) + timeLeft),
                 () -> {
                     preferencesManager.setModuleStatus(Status.ENABLED_IMMEDIATELY);
                     updateGui();

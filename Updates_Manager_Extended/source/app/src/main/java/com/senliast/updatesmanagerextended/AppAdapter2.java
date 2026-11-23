@@ -47,6 +47,7 @@ public class AppAdapter2 extends RecyclerView.Adapter<AppAdapter2.AppViewHolder>
         holder.appIcon.setImageDrawable(app.getAppIcon());
 
         holder.materialCheckBox.setOnCheckedChangeListener(null);
+        holder.itemView.setOnClickListener(null);
 
         boolean isToggled = false;
         for (SavedApp item : savedApps) {
@@ -64,6 +65,9 @@ public class AppAdapter2 extends RecyclerView.Adapter<AppAdapter2.AppViewHolder>
                     app.getAppIcon(),
                     isChecked
             );
+        });
+        holder.itemView.setOnClickListener(v -> {
+            holder.materialCheckBox.setChecked(!holder.materialCheckBox.isChecked());
         });
     }
 

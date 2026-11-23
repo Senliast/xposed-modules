@@ -1,6 +1,6 @@
 package com.senliast.updatesmanagerextended.compatibility;
 
-public class GroupInfo {
+public class GroupInfoCompatibility {
     private String name;
     private String status;
     private String installationSources;
@@ -8,10 +8,10 @@ public class GroupInfo {
     private boolean blockAllInstallationSources;
     private Long statusTime;
 
-    public GroupInfo() {
+    public GroupInfoCompatibility() {
     }
 
-    public GroupInfo(String name, String installationSources, String appsToBlockUpdates, boolean blockAllInstallationSources, String status, Long statusTime) {
+    public GroupInfoCompatibility(String name, String installationSources, String appsToBlockUpdates, boolean blockAllInstallationSources, String status, Long statusTime) {
         this.name = name;
         this.status = status;
         this.installationSources = installationSources;

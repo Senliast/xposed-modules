@@ -8,12 +8,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
-import com.senliast.MyApplication;
 
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -58,10 +59,10 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
     private ObjectBackgroundView obvSwitchBlockAll;
     private MaterialSwitch switchBlockAll;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DynamicColors.applyToActivityIfAvailable(this);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_installation_source_selection);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activityInstallationSourceSelection), (v, insets) -> {
@@ -88,13 +89,11 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
 
             return insets;
         });
-        DynamicColors.applyToActivityIfAvailable(this);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
         WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         controller.setAppearanceLightStatusBars(!Utils.isDarkModeActive());
         controller.setAppearanceLightNavigationBars(!Utils.isDarkModeActive());
-
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -120,13 +119,8 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
         alertDialogDialogLoading = builder.create();
         searchView = findViewById(R.id.searchView);
         setupSearchView();
-
         obvSwitchBlockAll = findViewById(R.id.obvSwitchBlockAll);
-        if (Utils.isDarkModeActive()) {
-            obvSwitchBlockAll.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container));
-        } else {
-            obvSwitchBlockAll.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_primary_container));
-        }
+        obvSwitchBlockAll.setRectangleColor(MaterialColors.getColor(recyclerView, com.google.android.material.R.attr.colorPrimaryContainer));
         switchBlockAll = findViewById(R.id.switchBlockAll);
 
         appList = new ArrayList<>();
@@ -172,6 +166,10 @@ public class InstallationSourceSelectionActivity extends AppCompatActivity {
                     enableRecyclerView();
                 }
             }
+        });
+
+        obvSwitchBlockAll.setOnClickListener(v -> {
+            switchBlockAll.setChecked(!switchBlockAll.isChecked());
         });
 
         if (groups.get(AppGlobals.groupToEdit).getBlockAllInstallationSources()) {

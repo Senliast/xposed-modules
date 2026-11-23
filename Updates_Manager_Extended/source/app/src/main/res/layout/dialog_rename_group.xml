@@ -4,22 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dialogRenameGroup"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:theme="@style/Theme.Material3.DynamicColors.DayNight">
-
-    <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="@string/rename_group_title"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextGroupName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:layout_height="wrap_content">
 
     <EditText
         android:id="@+id/editTextGroupName"
@@ -33,7 +18,6 @@
         android:hint="@string/add_group_text"
         android:inputType="textCapWords"
         android:singleLine="true"
-        android:theme="@style/Theme.Material3.DynamicColors.DayNight"
         app:layout_constraintBottom_toTopOf="@id/llOkCancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,4 +63,18 @@
             android:text="@string/cancel"
             app:shapeAppearanceOverlay="@style/Shape.RightButton" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/rename_group_title"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/editTextGroupName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

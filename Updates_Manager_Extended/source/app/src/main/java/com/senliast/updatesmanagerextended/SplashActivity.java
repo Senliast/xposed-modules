@@ -25,6 +25,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DynamicColors.applyToActivityIfAvailable(this);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_splash);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activitySplash), (v, insets) -> {
@@ -39,7 +40,6 @@ public class SplashActivity extends AppCompatActivity {
 
             return insets;
         });
-        DynamicColors.applyToActivityIfAvailable(this);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
         WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());

@@ -78,6 +78,7 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DynamicColors.applyToActivityIfAvailable(this);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_group_selection);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activityGroupSelection), (v, insets) -> {
@@ -104,7 +105,6 @@ public class GroupSelectionActivity extends AppCompatActivity implements GroupAc
 
             return insets;
         });
-        DynamicColors.applyToActivityIfAvailable(this);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
         WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());

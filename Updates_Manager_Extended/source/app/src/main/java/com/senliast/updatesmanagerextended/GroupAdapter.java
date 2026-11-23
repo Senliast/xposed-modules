@@ -9,10 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.materialswitch.MaterialSwitch;
-import com.senliast.MyApplication;
+import com.senliast.UmeApplication;
 
 import java.util.List;
 
@@ -58,21 +59,28 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
 
         // Remove listener to avoid loops
         holder.switchToggle.setOnCheckedChangeListener(null);
+        holder.obvSwitchEnableGroup.setOnClickListener(null);
 
-        if (preferencesManager.getStringPreference("moduleStatus", "disabled").equals("enabled_immediately")  || (preferencesManager.getStringPreference("moduleStatus", "disabled").equals("enabled_since") && System.currentTimeMillis() >= preferencesManager.getLongPreference("moduleStatusTime", 0L))) {
-            if (groups.get(position).getStatus().equals("enabled_immediately") || (groups.get(position).getStatus().equals("enabled_since") && System.currentTimeMillis() >= groups.get(position).getStatusTime())) {
+        // Set initial state as the items can be re-used
+        holder.switchToggle.setEnabled(true);
+        holder.obvSwitchEnableGroup.setClickable(true);
+
+        holder.timerHelper.stop();
+
+        if (preferencesManager.getModuleStatus().equals(Status.ENABLED_IMMEDIATELY)  || (preferencesManager.getModuleStatus().equals(Status.ENABLED_SINCE) && System.currentTimeMillis() >= preferencesManager.getModuleStatusTime())) {
+            if (groups.get(position).getStatus().equals(Status.ENABLED_IMMEDIATELY) || (groups.get(position).getStatus().equals(Status.ENABLED_SINCE) && System.currentTimeMillis() >= groups.get(position).getStatusTime())) {
                 holder.switchToggle.setChecked(true);
-                holder.textViewStatus.setText(MyApplication.getAppContext().getText(R.string.group_status_enabled));
+                holder.textViewStatus.setText(UmeApplication.getAppContext().getText(R.string.group_status_enabled));
             } else {
-                if (groups.get(position).getStatus().equals("disabled")) {
+                if (groups.get(position).getStatus().equals(Status.DISABLED)) {
                     holder.switchToggle.setChecked(false);
-                    holder.textViewStatus.setText(MyApplication.getAppContext().getText(R.string.group_status_disabled));
+                    holder.textViewStatus.setText(UmeApplication.getAppContext().getText(R.string.group_status_disabled));
                 } else {
                     holder.timerHelper.stop();
                     long endTime = group.getStatusTime();
                     holder.timerHelper.startCountdown(
                             endTime,
-                            timeLeft -> holder.textViewStatus.setText(MyApplication.getAppContext().getString(R.string.group_status_paused) + timeLeft),
+                            timeLeft -> holder.textViewStatus.setText(UmeApplication.getAppContext().getString(R.string.group_status_paused) + timeLeft),
                             pos -> {
                                 finishListener.onTimerFinished(pos);
                             },
@@ -80,17 +88,23 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                     );
                 }
             }
+
+            holder.switchToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (listener != null) {
+                    listener.onSwitchToggled(position, isChecked, group);
+                }
+            });
+
+            holder.obvSwitchEnableGroup.setOnClickListener(v -> {
+                holder.switchToggle.setChecked(!holder.switchToggle.isChecked());
+            });
         } else {
             holder.switchToggle.setChecked(false);
             holder.switchToggle.setEnabled(false);
-            holder.textViewStatus.setText(MyApplication.getAppContext().getText(R.string.app_status_disabled_for_groups));
+            holder.textViewStatus.setText(UmeApplication.getAppContext().getText(R.string.app_status_disabled_for_groups));
+            holder.obvSwitchEnableGroup.setClickable(false);
+            holder.obvSwitchEnableGroup.setOnClickListener(null);
         }
-
-        holder.switchToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (listener != null) {
-                listener.onSwitchToggled(position, isChecked, group);
-            }
-        });
 
         holder.buttonRename.setOnClickListener(v -> {
             int pos = holder.getAdapterPosition();
@@ -102,19 +116,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
             if (pos != RecyclerView.NO_POSITION) listener.onDelete(pos);
         });
 
-        if (rectangleColor != -1) {
-            holder.obvSwitchEnableGroup.setRectangleColor(
-                    ContextCompat.getColor(context, rectangleColor)
-            );
-        }
-
-        if (Utils.isDarkModeActive()) {
-            holder.obvSwitchEnableGroup.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary));
-            holder.llCard.setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_secondary_container));
-        } else {
-            holder.obvSwitchEnableGroup.setRectangleColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_primary));
-            holder.llCard.setBackgroundColor(MyApplication.getAppContext().getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_secondary_container));
-        }
+        holder.obvSwitchEnableGroup.setRectangleColor(MaterialColors.getColor(holder.itemView, com.google.android.material.R.attr.colorPrimary));
+        holder.llCard.setBackgroundColor(MaterialColors.getColor(holder.itemView, com.google.android.material.R.attr.colorSecondaryContainer));
     }
 
     public void revertSwitch(int position) {

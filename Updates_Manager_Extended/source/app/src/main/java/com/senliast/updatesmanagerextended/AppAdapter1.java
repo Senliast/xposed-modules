@@ -54,19 +54,22 @@ public class AppAdapter1 extends RecyclerView.Adapter<AppAdapter1.AppViewHolder>
         holder.timerText.setVisibility(View.GONE);
         holder.timerDivider.setVisibility(View.GONE);
 
+        holder.toggleSwitch.setEnabled(true);
+        holder.toggleSwitch.setOnCheckedChangeListener(null);
+        holder.itemView.setOnClickListener(null);
+        holder.itemView.setClickable(true);
+
+
         if (preferencesManager.getModuleStatus().equals(Status.ENABLED_IMMEDIATELY)  || (preferencesManager.getModuleStatus().equals(Status.ENABLED_SINCE) && System.currentTimeMillis() >= preferencesManager.getModuleStatusTime())) {
             if (groups.get(groupPosition).getStatus().equals(Status.ENABLED_IMMEDIATELY) || (groups.get(groupPosition).getStatus().equals(Status.ENABLED_SINCE) && System.currentTimeMillis() >= groups.get(groupPosition).getStatusTime())) {
-                holder.toggleSwitch.setEnabled(true);
-                holder.toggleSwitch.setOnCheckedChangeListener(null);
-
                 for (SavedApp savedApp : savedApps) {
                     if (savedApp.packageName.equals(app.getPackageName())) {
-                        if (savedApp.status.equals("enabled_immediately") || (savedApp.status.equals("enabled_since") && System.currentTimeMillis() >= savedApp.statusTime)) {
+                        if (savedApp.status.equals(Status.ENABLED_IMMEDIATELY) || (savedApp.status.equals(Status.ENABLED_SINCE) && System.currentTimeMillis() >= savedApp.statusTime)) {
                             holder.toggleSwitch.setChecked(true);
                             holder.timerHelper.stop();
                             holder.timerText.setVisibility(View.GONE);
                             holder.timerDivider.setVisibility(View.GONE);
-                        } else if (savedApp.status.equals("enabled_since") && System.currentTimeMillis() < savedApp.statusTime) {
+                        } else if (savedApp.status.equals(Status.ENABLED_SINCE) && System.currentTimeMillis() < savedApp.statusTime) {
                             holder.toggleSwitch.setChecked(false);
                             holder.timerText.setVisibility(View.VISIBLE);
                             holder.timerDivider.setVisibility(View.VISIBLE);
@@ -81,22 +84,29 @@ public class AppAdapter1 extends RecyclerView.Adapter<AppAdapter1.AppViewHolder>
                                     position
                             );
                         } else {
+                            holder.toggleSwitch.setChecked(false);
                             holder.timerText.setVisibility(View.GONE);
                             holder.timerDivider.setVisibility(View.GONE);
                         }
+                        break;
                     }
                 }
 
                 holder.toggleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     toggleListener.onToggle(position, isChecked, app.getPackageName());
                 });
+                holder.itemView.setOnClickListener(v -> {
+                    holder.toggleSwitch.setChecked(!holder.toggleSwitch.isChecked());
+                });
             } else {
                 holder.toggleSwitch.setChecked(false);
                 holder.toggleSwitch.setEnabled(false);
+                holder.itemView.setClickable(false);
             }
         } else {
             holder.toggleSwitch.setChecked(false);
             holder.toggleSwitch.setEnabled(false);
+            holder.itemView.setClickable(false);
         }
     }
 

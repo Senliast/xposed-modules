@@ -2,7 +2,7 @@ package com.senliast.updatesmanagerextended;
 
 import android.content.pm.PackageManager;
 
-import com.senliast.MyApplication;
+import com.senliast.UmeApplication;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ public class SettingsSanitizer {
                     Iterator<String> iteratorInstallationSources = installationSources.iterator();
                     while (iteratorInstallationSources.hasNext()) {
                         String item = iteratorInstallationSources.next();
-                        if (!isPackageInstalled(item.toString(), MyApplication.getAppContext().getPackageManager())) {
+                        if (!isPackageInstalled(item.toString(), UmeApplication.getAppContext().getPackageManager())) {
                             iteratorInstallationSources.remove();
                         }
                     }

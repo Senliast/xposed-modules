@@ -3,35 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dialogRemoveGroup"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:theme="@style/Theme.Material3.DynamicColors.DayNight">
-
-    <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="@string/remove_group_title"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/textViewMessage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textViewMessage"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:theme="@style/Theme.Material3.DynamicColors.DayNight"
-        app:layout_constraintBottom_toTopOf="@id/llOkCancel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/llOkCancel"
@@ -73,4 +45,30 @@
             android:text="@string/cancel"
             app:shapeAppearanceOverlay="@style/Shape.RightButton" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toTopOf="@id/llOkCancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/remove_group_title"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

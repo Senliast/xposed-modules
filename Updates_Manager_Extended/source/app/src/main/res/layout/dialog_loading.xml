@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dialogLoading"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:theme="@style/Theme.Material3.DynamicColors.DayNight">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/textViewPleaseWait"

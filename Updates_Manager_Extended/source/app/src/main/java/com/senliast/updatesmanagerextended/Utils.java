@@ -8,7 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
-import com.senliast.MyApplication;
+import com.senliast.UmeApplication;
 
 public class Utils {
     public static float convertIntDpToFloat(Context context, int dpValue) {
@@ -17,7 +17,7 @@ public class Utils {
     }
 
     public static boolean isDarkModeActive() {
-        UiModeManager uiModeManager = (UiModeManager) MyApplication.getAppContext().getSystemService(Context.UI_MODE_SERVICE);
+        UiModeManager uiModeManager = (UiModeManager) UmeApplication.getAppContext().getSystemService(Context.UI_MODE_SERVICE);
         int mode = uiModeManager.getNightMode();
         if (mode == UiModeManager.MODE_NIGHT_YES) {
             return true;

@@ -54,10 +54,16 @@ public class InstallationSourceAdapter extends RecyclerView.Adapter<Installation
         holder.toggleSwitch.setChecked(toggledApps.contains(app.getPackageName()) || isEnabled == false);
         holder.toggleSwitch.setEnabled(isEnabled);
         holder.toggleSwitch.setAlpha(isEnabled ? 1.0f : 0.6f);
+        holder.itemView.setClickable(isEnabled);
+        holder.itemView.setOnClickListener(null);
+        holder.itemView.setClickable(isEnabled);
 
         if (isEnabled) {
             holder.toggleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 toggleListener.onToggle(app.getPackageName(), isChecked);
+            });
+            holder.itemView.setOnClickListener(v -> {
+                holder.toggleSwitch.setChecked(!holder.toggleSwitch.isChecked());
             });
         }
 

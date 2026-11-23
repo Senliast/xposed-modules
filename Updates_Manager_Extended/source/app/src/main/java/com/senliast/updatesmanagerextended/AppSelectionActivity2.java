@@ -14,7 +14,7 @@ import android.view.View;
 
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.senliast.MyApplication;
+import com.senliast.UmeApplication;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,6 +64,7 @@ public class AppSelectionActivity2 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DynamicColors.applyToActivityIfAvailable(this);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_app_selection_2);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activityAppSelection2), (v, insets) -> {
@@ -90,7 +91,6 @@ public class AppSelectionActivity2 extends AppCompatActivity {
 
             return insets;
         });
-        DynamicColors.applyToActivityIfAvailable(this);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
         WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
@@ -129,7 +129,7 @@ public class AppSelectionActivity2 extends AppCompatActivity {
             public void onToggle(String appName, String packageName, Drawable appIcon, boolean isChecked) {
                 if (isChecked) {
                     savedApps.add(new SavedApp(appName, packageName, Status.ENABLED_IMMEDIATELY, 0L));
-                    preferencesManager.saveAppIcon(MyApplication.getAppContext(), appIcon, packageName);
+                    preferencesManager.saveAppIcon(UmeApplication.getAppContext(), appIcon, packageName);
                     savedPackageNamesOnly.add(packageName);
                 } else {
                     Iterator<SavedApp> iteratorToggledApps = savedApps.iterator();
@@ -137,7 +137,7 @@ public class AppSelectionActivity2 extends AppCompatActivity {
                         SavedApp item = iteratorToggledApps.next();
                         if (item.packageName.equals(packageName)) {
                             iteratorToggledApps.remove();
-                            preferencesManager.deleteAppIcon(MyApplication.getAppContext(), packageName);
+                            preferencesManager.deleteAppIcon(UmeApplication.getAppContext(), packageName);
                             savedPackageNamesOnly.remove(packageName);
                         }
                     }
@@ -229,10 +229,13 @@ public class AppSelectionActivity2 extends AppCompatActivity {
             savedPackageNamesOnly.clear();
 
             for (SavedApp savedApp: savedApps) {
-                boolean hasItem = false;
-                for (AppInfo2 appInfo2: appList) { if (appInfo2.getPackageName().equals(savedApp.packageName)) { hasItem = true; } }
-                if (!hasItem) {
-                    Drawable icon = preferencesManager.getSavedAppIcon(MyApplication.getAppContext(), savedApp.packageName);
+                try {
+                    // If the app is installed - this will succeed
+                    Drawable temp = pm.getApplicationIcon(savedApp.packageName);
+                    // appList.add(new AppInfo2(savedApp.appName, savedApp.packageName, pm.getApplicationIcon(savedApp.packageName)));
+                } catch (Exception e) {
+                    // "pm.getApplicationIcon()" failed - this means, the app is not installed and saved icon will be loaded
+                    Drawable icon = preferencesManager.getSavedAppIcon(UmeApplication.getAppContext(), savedApp.packageName);
                     icon.setColorFilter(new ColorMatrixColorFilter(matrix));
                     appList.add(new AppInfo2(savedApp.appName, savedApp.packageName, icon));
                 }
@@ -279,6 +282,17 @@ public class AppSelectionActivity2 extends AppCompatActivity {
     private void saveToggledApps() {
         groups.get(AppGlobals.groupToEdit).setAppsToBlockUpdates(savedApps);
         preferencesManager.setGroups(groups);
+    }
+
+    public boolean isPackageInstalled(String packageName) {
+        PackageManager pm = getPackageManager();
+
+        try {
+            pm.getPackageInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     @Override

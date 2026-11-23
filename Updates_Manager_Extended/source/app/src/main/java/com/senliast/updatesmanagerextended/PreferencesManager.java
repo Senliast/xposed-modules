@@ -1,10 +1,10 @@
 // The preferences manager can only handle the settings of current version of the app (except the
-// "importAllFromUri()", "upgradePreferencesDatabase()", and "testPreferences()" methods).
+// "importAllFromUri...", "upgradePreferencesDatabase()", and "testPreferences()" methods).
 // Therefore, "upgradePreferencesDatabase()" must be called before calling any other methods,
 // otherwise it can lead to unexpected app behaviour or corruption of preferences database.
 // The method determines itself, whether an upgrade is needed or not.
 //
-// The preferences are first read and saved without changes by "importAllFromUri()". This method is
+// The preferences are first read and saved without changes by "importAllFromUri...". This method is
 // responsible only for importing of preferences. Then, they will be upgraded by
 // "upgradePreferencesDatabase()", if needed.
 //
@@ -24,13 +24,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
-import com.senliast.MyApplication;
+import com.senliast.UmeApplication;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -47,7 +46,7 @@ import java.util.List;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.senliast.updatesmanagerextended.compatibility.GroupInfo;
+import com.senliast.updatesmanagerextended.compatibility.GroupInfoCompatibility;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -61,11 +60,10 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class PreferencesManager {
-    private final int APP_VERSION_CODE = 13;
-    private Context context = MyApplication.getAppContext();
+    private Context context = UmeApplication.getAppContext();
 
     public SharedPreferences getSharedPreferences() {
-        return MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        return UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
     }
 
     // Test if preferences API is available. If not - it means, that Xposed is not installed or module is not enabled.
@@ -74,7 +72,7 @@ public class PreferencesManager {
     public Boolean testPreferences() {
         SharedPreferences preferences;
         try {
-            preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+            preferences = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
             return true;
         } catch (SecurityException ignored) {
             return false;
@@ -82,70 +80,70 @@ public class PreferencesManager {
     }
 
     public Boolean testPreference(String a ) {
-        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        SharedPreferences preferences = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         return preferences.contains(a);
     }
 
     public void deletePreference(String a ) {
-        SharedPreferences.Editor editor = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
+        SharedPreferences.Editor editor = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
         editor.remove(a);
         editor.apply();
     }
 
     public void setIntPreference(String a, Integer b) {
-        SharedPreferences.Editor editor = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
+        SharedPreferences.Editor editor = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
         editor.putInt(a, b);
         editor.apply();
     }
 
     public Integer getIntPreference(String a, Integer b){
-        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        SharedPreferences preferences = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         return preferences.getInt(a, b);
     }
 
     public void setLongPreference(String a, Long b) {
-        SharedPreferences.Editor editor = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
+        SharedPreferences.Editor editor = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
         editor.putLong(a, b);
         editor.apply();
     }
 
     public Long getLongPreference(String a, Long b) {
-        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        SharedPreferences preferences = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         return preferences.getLong(a, b);
     }
 
     public String getStringPreference(String a, String b) {
-        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        SharedPreferences preferences = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         return preferences.getString(a, b);
     }
 
     public void setStringPreference(String a, String b) {
-        SharedPreferences.Editor editor = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
+        SharedPreferences.Editor editor = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
         editor.putString(a, b);
         editor.apply();
     }
 
     public Boolean getBooleanPreference(String a, Boolean b) {
-        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        SharedPreferences preferences = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         return preferences.getBoolean(a, b);
     }
 
     public void setBooleanPreference(String a, Boolean b) {
-        SharedPreferences.Editor editor = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
+        SharedPreferences.Editor editor = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
         editor.putBoolean(a, b);
         editor.apply();
     }
 
     // For compatibility
-    public List<GroupInfo> getGroupsCompatibility() {
+    public List<GroupInfoCompatibility> getGroupsCompatibility() {
         Gson gson = new Gson();
-        List<GroupInfo> groups = new ArrayList<>();
-        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Groups", Context.MODE_WORLD_READABLE);
+        List<GroupInfoCompatibility> groups = new ArrayList<>();
+        SharedPreferences preferences = UmeApplication.getAppContext().getSharedPreferences("Groups", Context.MODE_WORLD_READABLE);
         String json = preferences.getString("groups_list", null);
 
         if (json != null) {
-            Type type = new TypeToken<ArrayList<GroupInfo>>(){}.getType();
-            List<GroupInfo> loadedList = gson.fromJson(json, type);
+            Type type = new TypeToken<ArrayList<GroupInfoCompatibility>>(){}.getType();
+            List<GroupInfoCompatibility> loadedList = gson.fromJson(json, type);
 
             if (loadedList != null) {
                 groups.clear();
@@ -161,50 +159,50 @@ public class PreferencesManager {
     }
 
     public <T> T getGroups() {
-        SharedPreferences prefs = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        SharedPreferences prefs = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         String json = prefs.getString("groups", null);
         if (json == null) return null;
         return gson.fromJson(json, new TypeToken<List<Group>>(){}.getType());
     }
 
     public void setGroups(Object groups) {
-        SharedPreferences prefs = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        SharedPreferences prefs = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         String json = gson.toJson(groups);
         prefs.edit().putString("groups", json).apply();
     }
 
     public void setModuleStatus (String status) {
-        SharedPreferences.Editor editor = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
+        SharedPreferences.Editor editor = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
         editor.putString("moduleStatus", status);
         editor.putLong("moduleStatusTime", 0L);
         editor.apply();
     }
 
     public void setModuleStatus (String status, long statusTime) {
-        SharedPreferences.Editor editor = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
+        SharedPreferences.Editor editor = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
         editor.putString("moduleStatus", status);
         editor.putLong("moduleStatusTime", statusTime);
         editor.apply();
     }
 
     public String getModuleStatus() {
-        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        SharedPreferences preferences = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         return preferences.getString("moduleStatus", Status.ENABLED_IMMEDIATELY);
     }
 
     public long getModuleStatusTime () {
-        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        SharedPreferences preferences = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         return preferences.getLong("moduleStatusTime", 0L);
     }
 
     public void setIsNotFirstStart() {
-        SharedPreferences.Editor editor = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
+        SharedPreferences.Editor editor = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE).edit();
         editor.putBoolean("isFirstStart", false);
         editor.apply();
     }
 
     public boolean getIsFirstStart() {
-        SharedPreferences preferences = MyApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
+        SharedPreferences preferences = UmeApplication.getAppContext().getSharedPreferences("Preferences", Context.MODE_WORLD_READABLE);
         return preferences.getBoolean("isFirstStart", true);
     }
     private static final Gson gson = new Gson();
@@ -304,10 +302,10 @@ public class PreferencesManager {
                         }
                     }
                 }
-                Toast.makeText(context, "Export successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, UmeApplication.getAppContext().getText(R.string.preferences_successfully_exported), Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(context, "Export failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, UmeApplication.getAppContext().getText(R.string.error_exporting_preferences) + e.getMessage(), Toast.LENGTH_LONG).show();
             }
     }
 
@@ -319,7 +317,7 @@ public class PreferencesManager {
         try {
             if (context.getContentResolver().getType(uri).equals("text/plain")) {
 
-                InputStream inputStream = MyApplication.getAppContext()
+                InputStream inputStream = UmeApplication.getAppContext()
                         .getContentResolver().openInputStream(uri);
                 if (inputStream == null) return;
 
@@ -354,7 +352,7 @@ public class PreferencesManager {
 
                             if (!backup.has("isUpdatesManagerExtendedPreferencesFile") ||
                                     !backup.get("isUpdatesManagerExtendedPreferencesFile").getAsBoolean()) {
-                                Toast.makeText(MyApplication.getAppContext(), MyApplication.getAppContext().getText(R.string.not_a_valid_preferences_file) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(UmeApplication.getAppContext(), UmeApplication.getAppContext().getText(R.string.not_a_valid_preferences_file) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
                                 return;
                             }
 
@@ -389,7 +387,7 @@ public class PreferencesManager {
                 // occurred while reading file. Since "preferences.APP_VERSION_CODE" is always present in UME 4.0
                 // and higher, the file is either damaged or its not an UME preferences file. In both cases, its
                 // an unrecoverable error and it doesnt make sense to continue, so returning.
-                Toast.makeText(MyApplication.getAppContext(), MyApplication.getAppContext().getText(R.string.error_importing_preferences) + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(UmeApplication.getAppContext(), UmeApplication.getAppContext().getText(R.string.error_importing_preferences) + e.getMessage(), Toast.LENGTH_LONG).show();
                 return;
             }
         }
@@ -434,17 +432,17 @@ public class PreferencesManager {
                         intent.putExtra("type", "event");
                         intent.putExtra("event_name", "on_preferences_imported");
 
-                        LocalBroadcastManager.getInstance(MyApplication.getAppContext())
+                        LocalBroadcastManager.getInstance(UmeApplication.getAppContext())
                                 .sendBroadcast(intent);
 
-                        Toast.makeText(context, MyApplication.getAppContext().getText(R.string.preferences_successfully_imported) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, UmeApplication.getAppContext().getText(R.string.preferences_successfully_imported) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
                         upgradePreferencesDatabase();
                     } else {
-                        Toast.makeText(context, MyApplication.getAppContext().getText(R.string.not_a_valid_preferences_file) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, UmeApplication.getAppContext().getText(R.string.not_a_valid_preferences_file) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
                     }
                 }
             } catch (IOException e) {
-                Toast.makeText(context, MyApplication.getAppContext().getText(R.string.error_importing_preferences) + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, UmeApplication.getAppContext().getText(R.string.error_importing_preferences) + e.getMessage(), Toast.LENGTH_LONG).show();
             }
             return;
         }
@@ -454,7 +452,7 @@ public class PreferencesManager {
         // ========================================
         if (preferencesCodeVersion == 9 || preferencesCodeVersion == 10 || preferencesCodeVersion == 11) {
             try {
-                InputStream inputStream = MyApplication.getAppContext()
+                InputStream inputStream = UmeApplication.getAppContext()
                         .getContentResolver().openInputStream(uri);
                 if (inputStream == null) return;
 
@@ -469,7 +467,7 @@ public class PreferencesManager {
                 JsonObject backup = JsonParser.parseString(sb.toString()).getAsJsonObject();
 
                 if (!backup.has("isUpdatesManagerExtendedPreferencesFile") || !backup.get("isUpdatesManagerExtendedPreferencesFile").getAsBoolean()) {
-                    Toast.makeText(MyApplication.getAppContext(), MyApplication.getAppContext().getText(R.string.not_a_valid_preferences_file) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(UmeApplication.getAppContext(), UmeApplication.getAppContext().getText(R.string.not_a_valid_preferences_file) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -513,7 +511,7 @@ public class PreferencesManager {
                             } else if (key.equals("name")) {
                                 editor.putString(key, prim.getAsString());
                             } else {
-                                Toast.makeText(MyApplication.getAppContext(), MyApplication.getAppContext().getText(R.string.error_importing_preferences) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(UmeApplication.getAppContext(), UmeApplication.getAppContext().getText(R.string.error_importing_preferences) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
                                 return;
                             }
                         }
@@ -531,22 +529,22 @@ public class PreferencesManager {
                 intent.putExtra("type", "event");
                 intent.putExtra("event_name", "on_preferences_imported");
 
-                LocalBroadcastManager.getInstance(MyApplication.getAppContext())
+                LocalBroadcastManager.getInstance(UmeApplication.getAppContext())
                         .sendBroadcast(intent);
 
-                Toast.makeText(MyApplication.getAppContext(), MyApplication.getAppContext().getText(R.string.preferences_successfully_imported) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                Toast.makeText(UmeApplication.getAppContext(), UmeApplication.getAppContext().getText(R.string.preferences_successfully_imported) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
 
                 upgradePreferencesDatabase();
             } catch (Exception e) {
-                Toast.makeText(MyApplication.getAppContext(), MyApplication.getAppContext().getText(R.string.error_importing_preferences) + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(UmeApplication.getAppContext(), UmeApplication.getAppContext().getText(R.string.error_importing_preferences) + e.getMessage(), Toast.LENGTH_LONG).show();
             }
             return;
         }
         // ========================================
 
-        // UME 5.0 - 5.1 (version code 12 - 13)
+        // UME 5.0 - 6.0 (version code 12 - 14)
         // ========================================
-        if (preferencesCodeVersion == 12 || preferencesCodeVersion == 13) {
+        if (preferencesCodeVersion == 12 || preferencesCodeVersion == 13 || preferencesCodeVersion == 14) {
             try {
                 File iconsDir = new File(context.getFilesDir(), "Icons");
 
@@ -570,7 +568,7 @@ public class PreferencesManager {
 
                             if (!backup.has("isUpdatesManagerExtendedPreferencesFile") ||
                                     !backup.get("isUpdatesManagerExtendedPreferencesFile").getAsBoolean()) {
-                                Toast.makeText(MyApplication.getAppContext(), MyApplication.getAppContext().getText(R.string.not_a_valid_preferences_file) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(UmeApplication.getAppContext(), UmeApplication.getAppContext().getText(R.string.not_a_valid_preferences_file) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
                                 return;
                             }
 
@@ -609,7 +607,7 @@ public class PreferencesManager {
                                         } else if (key.equals("groups")) {
 
                                         } else {
-                                            Toast.makeText(MyApplication.getAppContext(), MyApplication.getAppContext().getText(R.string.error_importing_preferences) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(UmeApplication.getAppContext(), UmeApplication.getAppContext().getText(R.string.error_importing_preferences) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
                                             return;
                                         }
                                     }
@@ -645,36 +643,36 @@ public class PreferencesManager {
                 intent.putExtra("type", "event");
                 intent.putExtra("event_name", "on_preferences_imported");
 
-                LocalBroadcastManager.getInstance(MyApplication.getAppContext())
+                LocalBroadcastManager.getInstance(UmeApplication.getAppContext())
                         .sendBroadcast(intent);
 
-                Toast.makeText(MyApplication.getAppContext(), MyApplication.getAppContext().getText(R.string.preferences_successfully_imported) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                Toast.makeText(UmeApplication.getAppContext(), UmeApplication.getAppContext().getText(R.string.preferences_successfully_imported) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
 
                 upgradePreferencesDatabase();
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(context, "Import failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, UmeApplication.getAppContext().getText(R.string.error_importing_preferences) + e.getMessage(), Toast.LENGTH_LONG).show();
             }
             return;
         }
         // ========================================
 
-        Toast.makeText(context, MyApplication.getAppContext().getText(R.string.error_importing_preferences) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+        Toast.makeText(context, UmeApplication.getAppContext().getText(R.string.error_importing_preferences) + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
     }
     private void saveGroupsFromJsonCompatibility(String json) {
         if (json == null || json.isEmpty()) return;
         Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<GroupInfo>>(){}.getType();
-        List<GroupInfo> loadedGroups = gson.fromJson(json, type);
+        Type type = new TypeToken<ArrayList<GroupInfoCompatibility>>(){}.getType();
+        List<GroupInfoCompatibility> loadedGroups = gson.fromJson(json, type);
         if (loadedGroups != null) {
             saveGroupsCompatibility(loadedGroups);
         }
     }
 
-    private void saveGroupsCompatibility(List<GroupInfo> groups) {
+    private void saveGroupsCompatibility(List<GroupInfoCompatibility> groups) {
         Gson gson = new Gson();
         String json = gson.toJson(groups);
-        SharedPreferences.Editor editor = MyApplication.getAppContext().getSharedPreferences("Groups", Context.MODE_WORLD_READABLE).edit();
+        SharedPreferences.Editor editor = UmeApplication.getAppContext().getSharedPreferences("Groups", Context.MODE_WORLD_READABLE).edit();
         editor.putString("groups_list", json).apply();
         editor.apply();
     }
@@ -686,8 +684,8 @@ public class PreferencesManager {
                 setBooleanPreference("isFirstStart", !getBooleanPreference("welcomeMessageShown", false));
                 deletePreference("welcomeMessageShown");
                 List<String> appsToBlockUpdates = Arrays.asList((getStringPreference("appsToBlockUpdates", "")).split(","));
-                List<GroupInfo> groups = new ArrayList<>();
-                groups.add(new GroupInfo(MyApplication.getAppContext().getResources().getString(R.string.default_group_name), "", String.join(",", appsToBlockUpdates), true, "enabled_immediately", 0L));
+                List<GroupInfoCompatibility> groups = new ArrayList<>();
+                groups.add(new GroupInfoCompatibility(UmeApplication.getAppContext().getResources().getString(R.string.default_group_name), "", String.join(",", appsToBlockUpdates), true, "enabled_immediately", 0L));
                 saveGroupsCompatibility(groups);
                 deletePreference("appsToBlockUpdates");
                 if (getBooleanPreference("moduleEnabled", false)) {
@@ -709,8 +707,8 @@ public class PreferencesManager {
             if (getIntPreference("APP_VERSION_CODE", 0) == 11) {
                 PackageManager pm = context.getPackageManager();
                 List<Group> newGroups = new ArrayList<>();
-                List<GroupInfo> groups = getGroupsCompatibility();
-                for (GroupInfo group : groups) {
+                List<GroupInfoCompatibility> groups = getGroupsCompatibility();
+                for (GroupInfoCompatibility group : groups) {
                     Set<SavedApp> savedApps = new HashSet<>();
                     List<String> appsToBlockUpdates = Arrays.asList(group.getAppsToBlockUpdates().split(","));
                     for (String app : appsToBlockUpdates) {
@@ -728,12 +726,17 @@ public class PreferencesManager {
                 deletePreference("groups_list");
                 deletePreference("groupToEdit");
                 context.deleteSharedPreferences("Groups");
-                setIntPreference("APP_VERSION_CODE", APP_VERSION_CODE);
+                setIntPreference("APP_VERSION_CODE", 12);
             }
 
             // From version code 12 (UME 5.0)
             if (getIntPreference("APP_VERSION_CODE", 0) == 12) {
-                setIntPreference("APP_VERSION_CODE", APP_VERSION_CODE);
+                setIntPreference("APP_VERSION_CODE", 13);
+            }
+
+            // From version code 13 (UME 5.1)
+            if (getIntPreference("APP_VERSION_CODE", 0) == 13) {
+                setIntPreference("APP_VERSION_CODE", 14);
             }
         }
     }
